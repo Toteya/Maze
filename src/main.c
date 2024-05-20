@@ -31,10 +31,12 @@ int main(int argc, char *argv[])
 			quit = true;
 
 		/* Todo: Render */
+
 	}
+
+	render_graphics();
 
 	close_instance(&gInstance);
 
 	return (EXIT_SUCCESS);
 }
-
