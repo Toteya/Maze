@@ -68,32 +68,32 @@ enum Action_Code
  */
 typedef struct map_location
 {
-    int x;
-    int y;
+	int x;
+	int y;
 } map_location;
 
 /**
- * struct wall_block - A wall block (cube) in the map
+ * struct Maze_wall_block - A wall block (cube) in the map
  * @x: The x-coordinate on the grid
  * @y: the y-coordinate on the grid
  * Description: The building block cube of a wall on the map
  */
-typedef struct wall_block
+typedef struct Maze_wall_block
 {
-    int x;
-    int y;
-} wall_block;
+	int x;
+	int y;
+} Maze_wall_block;
 
 /**
- * struct player - A player
+ * struct Maze_player - A player
  * @pos: The location (coordinates) of the player on the map
  * @view_angle: The viewing angle of the player
  * Description: Everything related to the player inside the maze
  */
 typedef struct Maze_player
 {
-    map_location pos;
-    float view_angle;
+	map_location pos;
+	float view_angle;
 } Maze_player;
 
 
