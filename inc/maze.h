@@ -9,8 +9,8 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 #define FIELD_OF_VIEW 60
-#define GRID_WIDTH 64
-#define GRID_HEIGHT 64
+#define GRID_INTERVAL 64
+#define GRID_SIZE 600 /* Map size: 30 x 30 */
 #define PI 3.14159265359f
 
 #define Y_DIRECTION_UP -1
@@ -120,6 +120,7 @@ typedef struct Render_column
 bool init_instance(SDL_Instance *);
 int poll_events(void);
 void close_instance(SDL_Instance *);
-void render_graphics(SDL_Renderer *);
+void render_graphics(SDL_Renderer *, Maze_wall_block []);
+bool init_map(Maze_wall_block []);
 
 #endif /* MAZE_H */

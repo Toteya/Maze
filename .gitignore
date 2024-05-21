@@ -3,3 +3,4 @@ Makefile
 *.sh
 .vscode
 src/maze
+a.out

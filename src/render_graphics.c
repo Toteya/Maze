@@ -1,8 +1,8 @@
 #include "../inc/maze.h"
 
-void find_wall_distance(MazeRender_column *col, Maze_player p);
+void find_wall_distance(MazeRender_column *col, Maze_player p, Maze_wall_block map_arr[]);
 float to_radians(float angle_deg);
-bool check_for_wall(int x, int y);
+bool check_for_wall(int x, int y, Maze_wall_block []);
 void draw_wall_slice(MazeRender_column, int, SDL_Renderer *);
 void set_wall_color(int direction, SDL_Colour *wall_color);
 
@@ -11,7 +11,7 @@ void set_wall_color(int direction, SDL_Colour *wall_color);
  *
  * Return: void
  */
-void render_graphics(SDL_Renderer *gRenderer)
+void render_graphics(SDL_Renderer *gRenderer, Maze_wall_block map_arr[])
 {
 	int i;
 	int pp_distance; /* Distance between player and project plane */
@@ -26,7 +26,7 @@ void render_graphics(SDL_Renderer *gRenderer)
 	for (i = 0; i <= WINDOW_WIDTH; i++)
 	{
 		column.index = i;
-		find_wall_distance(&column, player);
+		find_wall_distance(&column, player, map_arr);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 
 		draw_wall_slice(column, pp_distance, gRenderer);
@@ -44,7 +44,7 @@ void render_graphics(SDL_Renderer *gRenderer)
  * @player_pos: The position of the player's viewpoint
  * Return: the distance between the ray and the wall
  */
-void find_wall_distance(MazeRender_column *column, Maze_player p)
+void find_wall_distance(MazeRender_column *column, Maze_player p, Maze_wall_block map_arr[])
 {
 	map_location player_pos = p.pos;
 	float view_angle = p.view_angle;
@@ -86,9 +86,9 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
 	/* find a horizontal intersection with a wall */
 	/* y-coordinate*/
 	if (dir_y == Y_DIRECTION_UP)
-		A_y = (player_pos.y / GRID_WIDTH) * GRID_WIDTH - 1;
+		A_y = (player_pos.y / GRID_INTERVAL) * GRID_INTERVAL - 1;
 	else if (dir_y == Y_DIRECTION_DOWN)
-		A_y = (player_pos.y / GRID_WIDTH) * GRID_WIDTH + GRID_WIDTH;
+		A_y = (player_pos.y / GRID_INTERVAL) * GRID_INTERVAL + GRID_INTERVAL;
 	else
 	{
 		/* ray is purely horizontal -> keep A_y equal player_pos(y) */
@@ -101,19 +101,19 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
 	while (A_x_grid >= 0 && A_y_grid >= 0)
 	{
 		/* Find grid coordinates */
-		A_y_grid = A_y / GRID_WIDTH;
-		A_x_grid = A_x / GRID_WIDTH;
-		/*printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n", column, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
-		wall_found = check_for_wall(A_x_grid, A_y_grid);
+		A_y_grid = A_y / GRID_INTERVAL;
+		A_x_grid = A_x / GRID_INTERVAL;
+		/*printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n", column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
 		if (wall_found)
 			break;
-		A_y_grid = (A_y - dir_y) / GRID_WIDTH;
-		wall_found = check_for_wall(A_x_grid, A_y_grid);
+		A_y_grid = (A_y - dir_y) / GRID_INTERVAL;
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
 		if (wall_found)
 			break;
 
-		A_x = A_x + (GRID_WIDTH / tanf(to_radians(ray_angle))) * dir_x;
-		A_y = A_y + GRID_WIDTH * dir_y;
+		A_x = A_x + (GRID_INTERVAL / tanf(to_radians(ray_angle))) * dir_x;
+		A_y = A_y + GRID_INTERVAL * dir_y;
 	}
 
 	if (wall_found)
@@ -122,9 +122,9 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
 	/* find a vertical intersection with a wall */
 	/* x-coordinate */
 	if (dir_x == X_DIRECTION_LEFT)
-		A_x = (player_pos.x / GRID_WIDTH) * GRID_WIDTH - 1;
+		A_x = (player_pos.x / GRID_INTERVAL) * GRID_INTERVAL - 1;
 	else if (dir_x == X_DIRECTION_RIGHT)
-		A_x = (player_pos.x / GRID_WIDTH) * GRID_WIDTH + GRID_WIDTH;
+		A_x = (player_pos.x / GRID_INTERVAL) * GRID_INTERVAL + GRID_INTERVAL;
 	else
 		A_x = player_pos.x; /* The ray is purely vertical -> don't change */
 	/* y-coordinate*/
@@ -135,19 +135,19 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
 	wall_found = false;
 	while (A_x_grid >= 0 && A_y_grid >= 0)
 	{
-		A_x_grid = A_x / GRID_WIDTH;
-		A_y_grid = A_y / GRID_WIDTH;
-		/*printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n", column, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
-		wall_found = check_for_wall(A_x_grid, A_y_grid);
+		A_x_grid = A_x / GRID_INTERVAL;
+		A_y_grid = A_y / GRID_INTERVAL;
+		/*printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n", column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
 		if (wall_found)
 			break;
-		A_x_grid = (A_x - dir_x) / GRID_WIDTH;
-		wall_found = check_for_wall(A_x_grid, A_y_grid);
+		A_x_grid = (A_x - dir_x) / GRID_INTERVAL;
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
 		if (wall_found)
 			break;
 
-		A_x = A_x + (GRID_WIDTH * dir_x);
-		A_y = A_y + (GRID_WIDTH * tanf(to_radians(ray_angle))) * dir_y;
+		A_x = A_x + (GRID_INTERVAL * dir_x);
+		A_y = A_y + (GRID_INTERVAL * tanf(to_radians(ray_angle))) * dir_y;
 	}
 
 	if (wall_found)
@@ -157,26 +157,26 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
 	if (dist_hor_int > 0)
 	{
 		distance = dist_hor_int;
+		if (dir_y == Y_DIRECTION_UP)
+			column->direction = SOUTH;
+		else
+			column->direction = NORTH;
+	}
+	else
+	{
+		distance = dist_ver_int;
 		if (dir_x == X_DIRECTION_LEFT)
 			column->direction = EAST;
 		else
 			column->direction = WEST;
 	}
-	else
-	{
-		distance = dist_ver_int;
-		if (dir_y == Y_DIRECTION_UP)
-			column->direction = SOUTH;
-		else
-			column->direction = NORTH;
-	}
 	if (dist_ver_int > 0 && dist_ver_int < dist_hor_int)
 	{
 		distance = dist_ver_int;
-		if (dir_y == Y_DIRECTION_UP)
-			column->direction = SOUTH;
+		if (dir_x == X_DIRECTION_LEFT)
+			column->direction = EAST;
 		else
-			column->direction = NORTH;
+			column->direction = WEST;
 	}
 
 	/* Distortion correction */
@@ -185,7 +185,7 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
 		beta = 360 - beta;
 
 	column->distance = distance * cosf(to_radians(beta));
-	/*printf("d_hor: %f, d_ver: %f, d: %f, d_cor: %f\n", dist_hor_int, dist_ver_int, distance, cor_distance);*/
+	/*printf("col: %d, d_hor: %f, d_ver: %f, d: %f, d_cor: %d, dir: %d\n", column->index, dist_hor_int, dist_ver_int, distance, column->direction, column->direction);*/
 }
 
 /**
@@ -194,33 +194,18 @@ void find_wall_distance(MazeRender_column *column, Maze_player p)
  * @y: The y coordinate of the grid position to be checked
  * Return: (bool) TRUE if there is a wall. Otherwise return FALSE.
  */
-bool check_for_wall(int x, int y)
+bool check_for_wall(int x, int y, Maze_wall_block map_array[])
 {
 	int i;
-	Maze_wall_block wall_array[50] = {
-		{0, 0},
-		{6,17}, {9,17}, {12,17},
-		{6,18},	{9,18},	{12,18},
-		{6,19},	{9,19},	{12,19},
-		{6,20},	{9,20},	{12,20},
-		{3,21}, {4,21}, {5,21}, {6,21},	{9,21},	{12,21},
-		{9,22},
-		{9,23},
-		{9,24}, {10,24}, {11,24}, {12,24},
-		{12,25},
-		{12,26}
-	};
-
-	/* Search wall_array for match*/
-	for (i = 0; i < 50; i++)
+	/* Search map_array for matching wall coordinate */
+	for (i = 0; i < GRID_SIZE; i++)
 	{
-		if (wall_array[i].x == x && wall_array[i].y == y)
+		if (map_array[i].x == x && map_array[i].y == y)
 		{
 			/* printf("Wall: {%d, %d}\n", x, y); */
 			return (true);
 		}
 	}
-
 	return (false);
 }
 
@@ -244,7 +229,7 @@ float to_radians(float angle_deg)
  */
 void draw_wall_slice(MazeRender_column column, int pp_distance, SDL_Renderer *gRenderer)
 {
-	int wall_height = GRID_WIDTH; /* Actual wall height*/
+	int wall_height = GRID_INTERVAL; /* Actual wall height*/
 	int proj_height; /* Wall projection height */
 	int start_point, end_point;
 	SDL_Color wall_color;

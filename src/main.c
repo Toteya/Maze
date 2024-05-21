@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 {
 	bool quit = false;
 	SDL_Instance gInstance;
+    Maze_wall_block map_array[GRID_SIZE];
 
 	(void) argv;
 	(void) argc;
@@ -22,6 +23,12 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
+    if (init_map(map_array) == false)
+    {
+        fprintf(stderr, "Map failed to initialise\n");
+        return (EXIT_FAILURE);
+    }
+
 	/* Todo: load media */
 
 	/* Start game loop */
@@ -31,7 +38,7 @@ int main(int argc, char *argv[])
 			quit = true;
 
 		/* Todo: Render */
-	    render_graphics(gInstance.renderer);
+	    render_graphics(gInstance.renderer, map_array);
 	}
 
 	close_instance(&gInstance);
