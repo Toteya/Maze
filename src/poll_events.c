@@ -24,9 +24,9 @@ int poll_events(void)
 					case SDLK_ESCAPE:
 						return (ACTION_QUIT);
 					case SDLK_UP:
-						return (ACTION_UP);
+						return (ACTION_FORWARD);
 					case SDLK_DOWN:
-						return (ACTION_DOWN);
+						return (ACTION_BACKWARD);
 					case SDLK_LEFT:
 						return (ACTION_LEFT);
 					case SDLK_RIGHT:

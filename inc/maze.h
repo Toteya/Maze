@@ -12,6 +12,7 @@
 #define GRID_INTERVAL 64
 #define GRID_SIZE 600 /* Map size: 30 x 30 */
 #define PI 3.14159265359f
+#define MOVE_STEP 5
 
 #define Y_DIRECTION_UP -1
 #define Y_DIRECTION_DOWN 1
@@ -46,7 +47,7 @@ enum Action_Code
 	ACTION_LEFT,
 	ACTION_RIGHT,
 	ACTION_FORWARD,
-	ACTION_BACKWORD
+	ACTION_BACKWARD
 };
 
 /**
@@ -138,7 +139,9 @@ void render_graphics(SDL_Instance *);
 bool init_map(Maze_wall_block []);
 void do_action(int action, Maze_player *);
 void do_turn(int action, Maze_player *);
+void do_forward(Maze_player *player);
 void init_player(Maze_player *);
+float to_radians(float angle_deg);
 
 
 #endif /* MAZE_H */

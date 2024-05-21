@@ -1,7 +1,6 @@
 #include "../inc/maze.h"
 
 void find_wall_distance(MazeRender_column *col, Maze_player p, Maze_wall_block map_arr[]);
-float to_radians(float angle_deg);
 bool check_for_wall(int x, int y, Maze_wall_block []);
 void draw_wall_slice(MazeRender_column, int, SDL_Renderer *);
 void set_wall_color(int direction, SDL_Colour *wall_color);
