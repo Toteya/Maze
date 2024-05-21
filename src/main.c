@@ -31,10 +31,8 @@ int main(int argc, char *argv[])
 			quit = true;
 
 		/* Todo: Render */
-
+	    render_graphics(gInstance.renderer);
 	}
-
-	render_graphics();
 
 	close_instance(&gInstance);
 

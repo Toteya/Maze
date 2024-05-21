@@ -101,6 +101,6 @@ typedef struct Maze_player
 bool init_instance(SDL_Instance *);
 int poll_events(void);
 void close_instance(SDL_Instance *);
-void render_graphics(void);
+void render_graphics(SDL_Renderer *);
 
 #endif /* MAZE_H */

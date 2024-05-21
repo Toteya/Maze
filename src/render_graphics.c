@@ -1,27 +1,41 @@
 #include "../inc/maze.h"
 
-int find_wall(int, float, map_location);
+int find_wall_distance(int, float, map_location);
 float to_radians(float angle_deg);
 bool check_for_wall(int x, int y);
+int draw_wall_slice(int column, int wall_distance, int pp_distance, SDL_Renderer *);
 
 /**
  * render_graphics - Renders the maze graphics onto the screen
  *
  * Return: void
  */
-void render_graphics(void)
+void render_graphics(SDL_Renderer *gRenderer)
 {
 	int i;
+	int wall_distance; /* Distance between player and wall */
+	int pp_distance; /* Distance between player and project plane */
 	Maze_player player = {
 		{192, 1792},
 		
 		45
 	};
 
+	pp_distance = (WINDOW_WIDTH / 2) / (tanf(to_radians(FIELD_OF_VIEW / 2)));
+
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(gRenderer);
+
 	for (i = 0; i <= WINDOW_WIDTH; i++)
 	{
-		find_wall(i, player.view_angle, player.pos);
+		wall_distance = find_wall_distance(i, player.view_angle, player.pos);
+		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
+		
+		draw_wall_slice(i, wall_distance, pp_distance, gRenderer);
+			
 	}
+
+	SDL_RenderPresent(gRenderer);
 }
 
 /**
@@ -32,14 +46,15 @@ void render_graphics(void)
  * @player_pos: The position of the player's viewpoint
  * Return: the distance between the ray and the wall
  */
-int find_wall(int column, float view_angle, map_location player_pos)
+int find_wall_distance(int column, float view_angle, map_location player_pos)
 {
 	float angle_btwn_rays = (float) FIELD_OF_VIEW / WINDOW_WIDTH;
 	float ray_angle;
 	float beta; /* distort. cor. factor - angle between ray and viewing angle*/
-	float dist_vertical_int = 0; /* distance to vertical wall intersect */
-	float dist_horizontal_int = 0; /* distance to horizontal wall intersect */
+	float dist_ver_int = 0; /* distance to vertical wall intersect */
+	float dist_hor_int = 0; /* distance to horizontal wall intersect */
 	float distance; /* Distance from player viewpoint to wall*/
+	float cor_distance; /* Distance corrected for distortion viewpoint to wall*/
 	int dir_y, dir_x; /* Direction of ray in y and x axes*/
 	float A_x, A_y; /* Grid intersection coordination */
 	int A_x_grid = 0, A_y_grid = 0; /* Grid coordinates */
@@ -83,12 +98,13 @@ int find_wall(int column, float view_angle, map_location player_pos)
 	/* x-cordinate */
 	A_x = player_pos.x + (player_pos.y - A_y) / tanf(to_radians(ray_angle));
 
+	wall_found = false;
 	while (A_x_grid >= 0 && A_y_grid >= 0)
 	{
 		/* Find grid coordinates */
 		A_y_grid = A_y / GRID_WIDTH;
 		A_x_grid = A_x / GRID_WIDTH;
-		/* printf("Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n", ray_angle, A_x_grid, A_y_grid, A_x, A_y); */
+		/*printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n", column, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
 		wall_found = check_for_wall(A_x_grid, A_y_grid);
 		if (wall_found)
 			break;
@@ -102,7 +118,7 @@ int find_wall(int column, float view_angle, map_location player_pos)
 	}
 
 	if (wall_found)
-		dist_vertical_int =  fabs(player_pos.x - A_x) / cosf(to_radians(ray_angle));
+		dist_hor_int =  fabs(player_pos.x - A_x) / cosf(to_radians(ray_angle));
 
 	/* find a vertical intersection with a wall */
 	/* x-coordinate */
@@ -117,11 +133,12 @@ int find_wall(int column, float view_angle, map_location player_pos)
 
 	A_y_grid = 0;
 	A_x_grid = 0;
+	wall_found = false;
 	while (A_x_grid >= 0 && A_y_grid >= 0)
 	{
 		A_x_grid = A_x / GRID_WIDTH;
 		A_y_grid = A_y / GRID_WIDTH;
-		/* printf("Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n", ray_angle, A_x_grid, A_y_grid, A_x, A_y); */
+		/*printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n", column, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
 		wall_found = check_for_wall(A_x_grid, A_y_grid);
 		if (wall_found)
 			break;
@@ -135,22 +152,26 @@ int find_wall(int column, float view_angle, map_location player_pos)
 	}
 
 	if (wall_found)
-		dist_horizontal_int =  fabs(player_pos.x - A_x) / cosf(to_radians(ray_angle));
+		dist_ver_int =  fabs(player_pos.x - A_x) / cosf(to_radians(ray_angle));
 
-	if (dist_horizontal_int && dist_horizontal_int < dist_vertical_int)
-		distance = dist_horizontal_int;
+	/* Not to address potential bug - CASE: distance is correctly ZERO*/
+	if (dist_hor_int > 0)
+		distance = dist_hor_int;
 	else
-		distance = dist_vertical_int;
+		distance = dist_ver_int;
+	if (dist_ver_int > 0 && dist_ver_int < dist_hor_int)
+		distance = dist_ver_int;
+	
 
 	/* Distortion correction */
 	beta = fabs(ray_angle - view_angle);
 	if (beta > 180)
 		beta = 360 - beta;
 
-	distance = distance * cosf(to_radians(beta));
+	cor_distance = distance * cosf(to_radians(beta));
+	/*printf("d_hor: %f, d_ver: %f, d: %f, d_cor: %f\n", dist_hor_int, dist_ver_int, distance, cor_distance);*/
 
-	return (distance);
-
+	return (cor_distance);
 }
 
 /**
@@ -181,7 +202,7 @@ bool check_for_wall(int x, int y)
 	{
 		if (wall_array[i].x == x && wall_array[i].y == y)
 		{
-			printf("Wall: {%d, %d}\n", x, y);
+			/* printf("Wall: {%d, %d}\n", x, y); */
 			return (true);
 		}
 	}
@@ -199,4 +220,28 @@ float to_radians(float angle_deg)
 	float angle_rad = angle_deg * (PI / 180);
 
 	return (angle_rad);
+}
+
+/**
+ * draw_wall_slice - Draws a wall slice onto the projection plane
+ * @wall_distance: The distance from the player's viewpoint to the wall
+ * @pp_distance: The distance from the player to the projection plane
+ * Return: 
+ */
+int draw_wall_slice(int column, int wall_distance, int pp_distance, SDL_Renderer *gRenderer)
+{
+	int wall_height = GRID_WIDTH; /* Actual wall height*/
+	int proj_height; /* Wall projection height */
+	int start_point, end_point;
+
+	proj_height = wall_height * ((float) pp_distance / wall_distance);
+	/*printf("col: %d, Dw: %d, Dp: %d, Hw: %d, Hp: %d\n", column, wall_distance, pp_distance, wall_height, proj_height);*/
+	
+	start_point = (WINDOW_HEIGHT / 2) - (proj_height / 2);
+	end_point = start_point + proj_height;
+
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+	SDL_RenderDrawLine(gRenderer, column, start_point, column, end_point);
+
+	return (wall_distance);
 }

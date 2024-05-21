@@ -1,4 +1,5 @@
 tester.c
 Makefile
 *.sh
+.vscode
 src/maze
