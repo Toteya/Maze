@@ -21,18 +21,7 @@
 #define X_DIRECTION_NONE 0
 
 
-/**
- * struct SDL_Instance - an SDL instance / game instance
- * @window: the game window (SDL_Window)
- * @renderer: the game renderer (SDL_Renderer)
- *
- * Description: A struct representing the SDL (game) instance
- */
-typedef struct SDL_Instance
-{
-	SDL_Window *window;
-	SDL_Renderer *renderer;
-} SDL_Instance;
+
 
 /**
  * enum Action_Code - action codes corresponding to an event
@@ -60,13 +49,23 @@ enum Action_Code
 	ACTION_BACKWORD
 };
 
-enum WallDirection
+/**
+ * enum Wall_Direction - The direction that a wall is facing
+ * @NORTH: North
+ * @EAST: East
+ * @SOUTH: South
+ * @WEST: West
+ * Description: Provides a unique code representing the direction of the wall
+ */
+enum Wall_Direction
 {
     NORTH = 1,
     EAST,
     SOUTH,
     WEST
 };
+
+
 
 /**
  * struct map_location - Position on the map (x-y coordinates)
@@ -105,6 +104,21 @@ typedef struct Maze_player
 } Maze_player;
 
 /**
+ * struct SDL_Instance - an SDL instance / game instance
+ * @window: the game window (SDL_Window)
+ * @renderer: the game renderer (SDL_Renderer)
+ *
+ * Description: A struct representing the SDL (game) instance
+ */
+typedef struct SDL_Instance
+{
+	SDL_Window *window;
+	SDL_Renderer *renderer;
+    Maze_player player;
+    Maze_wall_block map_array[GRID_SIZE];
+} SDL_Instance;
+
+/**
  * struct MazeRender_column - a column (wall slice) to be rendered on the screen
  * @index: the column number / position on the screen
  * @distance: the distance from the column to the player
@@ -120,7 +134,11 @@ typedef struct Render_column
 bool init_instance(SDL_Instance *);
 int poll_events(void);
 void close_instance(SDL_Instance *);
-void render_graphics(SDL_Renderer *, Maze_wall_block []);
+void render_graphics(SDL_Instance *);
 bool init_map(Maze_wall_block []);
+void do_action(int action, Maze_player *);
+void do_turn(int action, Maze_player *);
+void init_player(Maze_player *);
+
 
 #endif /* MAZE_H */

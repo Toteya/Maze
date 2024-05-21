@@ -11,12 +11,13 @@ void set_wall_color(int direction, SDL_Colour *wall_color);
  *
  * Return: void
  */
-void render_graphics(SDL_Renderer *gRenderer, Maze_wall_block map_arr[])
+void render_graphics(SDL_Instance *gInstance)
 {
 	int i;
 	int pp_distance; /* Distance between player and project plane */
 	MazeRender_column column;
-	Maze_player player = {{192, 1792},45};
+	SDL_Renderer *gRenderer = gInstance->renderer;
+	Maze_player player = gInstance->player;
 
 	pp_distance = (WINDOW_WIDTH / 2) / (tanf(to_radians(FIELD_OF_VIEW / 2)));
 
@@ -26,11 +27,10 @@ void render_graphics(SDL_Renderer *gRenderer, Maze_wall_block map_arr[])
 	for (i = 0; i <= WINDOW_WIDTH; i++)
 	{
 		column.index = i;
-		find_wall_distance(&column, player, map_arr);
+		find_wall_distance(&column, player, gInstance->map_array);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 
 		draw_wall_slice(column, pp_distance, gRenderer);
-
 	}
 
 	SDL_RenderPresent(gRenderer);
