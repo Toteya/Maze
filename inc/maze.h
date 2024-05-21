@@ -60,6 +60,14 @@ enum Action_Code
 	ACTION_BACKWORD
 };
 
+enum WallDirection
+{
+    NORTH = 1,
+    EAST,
+    SOUTH,
+    WEST
+};
+
 /**
  * struct map_location - Position on the map (x-y coordinates)
  * @x: The x-coordinate of the position
@@ -96,7 +104,18 @@ typedef struct Maze_player
 	float view_angle;
 } Maze_player;
 
-
+/**
+ * struct MazeRender_column - a column (wall slice) to be rendered on the screen
+ * @index: the column number / position on the screen
+ * @distance: the distance from the column to the player
+ * @direction: the direction of the column is facing
+ */
+typedef struct Render_column
+{
+    int index;
+    int distance;
+    int direction;
+} MazeRender_column;
 
 bool init_instance(SDL_Instance *);
 int poll_events(void);
