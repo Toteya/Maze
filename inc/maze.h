@@ -139,7 +139,7 @@ void render_graphics(SDL_Instance *);
 bool init_map(MazeWall[]);
 void do_action(int action, MazePlayer *);
 void do_turn(int action, MazePlayer *);
-void do_forward(MazePlayer *player);
+void do_move(int action, MazePlayer *);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
 
