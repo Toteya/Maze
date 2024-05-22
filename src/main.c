@@ -11,9 +11,9 @@
 int main(int argc, char *argv[])
 {
 	/* bool quit = false; */
-    int action;
+	int action;
 	SDL_Instance gInstance;
-    /* Maze_wall_block map_array[GRID_SIZE]; */
+	/* Maze_wall_block map_array[GRID_SIZE]; */
 
 	(void) argv;
 	(void) argc;
@@ -24,26 +24,26 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-    if (init_map(gInstance.map_array) == false)
-    {
-        fprintf(stderr, "Map failed to initialise\n");
-        return (EXIT_FAILURE);
-    }
+	if (init_map(gInstance.map_array) == false)
+	{
+		fprintf(stderr, "Map failed to initialise\n");
+		return (EXIT_FAILURE);
+	}
 
-    init_player(&(gInstance.player));
+	init_player(&(gInstance.player));
 
 	/* Todo: load media */
 
 	/* Start game loop */
 	while (true)
 	{
-        action = poll_events();
+		action = poll_events();
 		if (action < 0)
 			break;
-        do_action(action, &(gInstance.player));
+		do_action(action, &(gInstance.player));
 
 		/* Todo: Render */
-	    render_graphics(&gInstance);
+		render_graphics(&gInstance);
 	}
 
 	close_instance(&gInstance);

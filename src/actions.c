@@ -6,24 +6,23 @@
  * @player: The player
  * Return: Nothing
  */
-void do_action(int action, Maze_player *player)
+void do_action(int action, MazePlayer *player)
 {
-    switch (action)
-    {
-    case ACTION_LEFT:
-        do_turn(action, player);
-        break;
-    case ACTION_RIGHT:
-        do_turn(action, player);
-        break;
-    case ACTION_FORWARD:
-        do_forward(player);
-        break;
-    default:
-        break;
-    }   
+	switch (action)
+	{
+		case ACTION_LEFT:
+			do_turn(action, player);
+			break;
+		case ACTION_RIGHT:
+			do_turn(action, player);
+			break;
+		case ACTION_FORWARD:
+			do_forward(player);
+			break;
+		default:
+			break;
+	}
 }
-
 
 /**
  * do_turn - Rotates the player's viewpoint according to the given direction
@@ -32,12 +31,12 @@ void do_action(int action, Maze_player *player)
  * @player: the player
  * Return: Nothing
  */
-void do_turn(int action, Maze_player *player)
+void do_turn(int action, MazePlayer *player)
 {
 	if (action == ACTION_LEFT)
-        player->view_angle++;
-    else
-        player->view_angle--;
+		player->view_angle++;
+	else
+		player->view_angle--;
 }
 
 /**
@@ -45,10 +44,13 @@ void do_turn(int action, Maze_player *player)
  * @player: The player
  * Return: Nothing
  */
-void do_forward(Maze_player *player)
+void do_forward(MazePlayer *player)
 {
-    player->pos.x = player->pos.x + ((float) MOVE_STEP * cosf(to_radians(player->view_angle)));
-    player->pos.y = player->pos.y - ((float) MOVE_STEP * sinf(to_radians(player->view_angle)));
-    
-    printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y);
+	float angle_rad;
+
+	angle_rad = to_radians(player->view_angle);
+	player->pos.x = player->pos.x + ((float) MOVE_STEP * cosf(angle_rad));
+	player->pos.y = player->pos.y - ((float) MOVE_STEP * sinf(angle_rad));
+
+	/* printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y); */
 }

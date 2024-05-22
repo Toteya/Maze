@@ -1,22 +1,22 @@
 #include "../inc/maze.h"
 
-void find_wall_distance(MazeRender_column *col, Maze_player p, Maze_wall_block map_arr[]);
-bool check_for_wall(int x, int y, Maze_wall_block []);
-void draw_wall_slice(MazeRender_column, int, SDL_Renderer *);
+void get_wall_distance(RenderColumn *, MazePlayer, MazeWall[]);
+bool check_for_wall(int x, int y, MazeWall[]);
+void draw_wall_slice(RenderColumn, int, SDL_Renderer *);
 void set_wall_color(int direction, SDL_Colour *wall_color);
 
 /**
  * render_graphics - Renders the maze graphics onto the screen
- *
+ * @gInstance: SDL game instance
  * Return: void
  */
 void render_graphics(SDL_Instance *gInstance)
 {
 	int i;
 	int pp_distance; /* Distance between player and project plane */
-	MazeRender_column column;
+	RenderColumn column;
 	SDL_Renderer *gRenderer = gInstance->renderer;
-	Maze_player player = gInstance->player;
+	MazePlayer player = gInstance->player;
 
 	pp_distance = (WINDOW_WIDTH / 2) / (tanf(to_radians(FIELD_OF_VIEW / 2)));
 
@@ -26,7 +26,7 @@ void render_graphics(SDL_Instance *gInstance)
 	for (i = 0; i <= WINDOW_WIDTH; i++)
 	{
 		column.index = i;
-		find_wall_distance(&column, player, gInstance->map_array);
+		get_wall_distance(&column, player, gInstance->map_array);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 
 		draw_wall_slice(column, pp_distance, gRenderer);
@@ -36,18 +36,18 @@ void render_graphics(SDL_Instance *gInstance)
 }
 
 /**
- * find_wall - Calculates the distance of a ray from the player viewpoint
- * to a wall
+ * get_wall_distance - Calculates the distance of a ray from the player
+ * viewpoint to a wall
  * @column: The ray (or column) whose distance to the wall is to be found
- * @view_angle: The player's angle of view.
- * @player_pos: The position of the player's viewpoint
+ * @p: The game player
+ * @map_arr: The wall map array
  * Return: the distance between the ray and the wall
  */
-void find_wall_distance(MazeRender_column *column, Maze_player p, Maze_wall_block map_arr[])
+void get_wall_distance(RenderColumn *column, MazePlayer p, MazeWall map_arr[])
 {
 	map_location player_pos = p.pos;
 	float view_angle = p.view_angle;
-	float angle_btwn_rays = (float) FIELD_OF_VIEW / WINDOW_WIDTH;
+	float angle_btwn_rays;
 	float ray_angle;
 	float beta; /* distort. cor. factor - angle between ray and viewing angle*/
 	float dist_ver_int = 0; /* distance to vertical wall intersect */
@@ -58,6 +58,7 @@ void find_wall_distance(MazeRender_column *column, Maze_player p, Maze_wall_bloc
 	int A_x_grid = 0, A_y_grid = 0; /* Grid coordinates */
 	bool wall_found;
 
+	angle_btwn_rays = (float) FIELD_OF_VIEW / WINDOW_WIDTH;
 	ray_angle = view_angle + (FIELD_OF_VIEW / 2) - (column->index * angle_btwn_rays);
 	if (ray_angle >= 360)
 		ray_angle -= 360;
@@ -102,7 +103,10 @@ void find_wall_distance(MazeRender_column *column, Maze_player p, Maze_wall_bloc
 		/* Find grid coordinates */
 		A_y_grid = A_y / GRID_INTERVAL;
 		A_x_grid = A_x / GRID_INTERVAL;
-		/*printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n", column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
+		/**
+		* printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n",
+		* column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);
+		*/
 		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
 		if (wall_found)
 			break;
@@ -136,7 +140,10 @@ void find_wall_distance(MazeRender_column *column, Maze_player p, Maze_wall_bloc
 	{
 		A_x_grid = A_x / GRID_INTERVAL;
 		A_y_grid = A_y / GRID_INTERVAL;
-		/*printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n", column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);*/
+		/**
+		* printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n",
+		* column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);
+		*/
 		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
 		if (wall_found)
 			break;
@@ -184,16 +191,21 @@ void find_wall_distance(MazeRender_column *column, Maze_player p, Maze_wall_bloc
 		beta = 360 - beta;
 
 	column->distance = distance * cosf(to_radians(beta));
-	/*printf("col: %d, d_hor: %f, d_ver: %f, d: %f, d_cor: %d, dir: %d\n", column->index, dist_hor_int, dist_ver_int, distance, column->direction, column->direction);*/
+	/**
+	* printf("col: %d, d_hor: %f, d_ver: %f, d: %f, d_cor: %d, dir: %d\n",
+	* column->index, dist_hor_int, dist_ver_int, distance,
+	* column->direction, column->direction);
+	*/
 }
 
 /**
  * check_for_wall - Checks if there is a wall at the given grid position
  * @x: The x coordinate of the grid position to be checked.
  * @y: The y coordinate of the grid position to be checked
+ * @map_array: The wall map array
  * Return: (bool) TRUE if there is a wall. Otherwise return FALSE.
  */
-bool check_for_wall(int x, int y, Maze_wall_block map_array[])
+bool check_for_wall(int x, int y, MazeWall map_array[])
 {
 	int i;
 	/* Search map_array for matching wall coordinate */
@@ -222,31 +234,37 @@ float to_radians(float angle_deg)
 
 /**
  * draw_wall_slice - Draws a wall slice onto the projection plane
- * @wall_distance: The distance from the player's viewpoint to the wall
- * @pp_distance: The distance from the player to the projection plane
- * Return: 
+ * @pp_dist: The distance from the player to the projection plane
+ * @c: The column to be rendered
+ * @gRenderer: The SDL renderer
+ * Return: Nothing
  */
-void draw_wall_slice(MazeRender_column column, int pp_distance, SDL_Renderer *gRenderer)
+void draw_wall_slice(RenderColumn c, int pp_dist, SDL_Renderer *gRenderer)
 {
 	int wall_height = GRID_INTERVAL; /* Actual wall height*/
 	int proj_height; /* Wall projection height */
 	int start_point, end_point;
-	SDL_Color wall_color;
+	SDL_Color w_color;
 
-	proj_height = wall_height * ((float) pp_distance / column.distance);
-	/*printf("col: %d, Dw: %d, Dp: %d, Hw: %d, Hp: %d\n", column, wall_distance, pp_distance, wall_height, proj_height);*/
+	proj_height = wall_height * ((float) pp_dist / c.distance);
+	/**
+	* printf("col: %d, Dw: %d, Dp: %d, Hw: %d, Hp: %d\n",
+	* column, wall_distance, pp_distance, wall_height, proj_height);
+	*/
 
 	start_point = (WINDOW_HEIGHT / 2) - (proj_height / 2);
 	end_point = start_point + proj_height;
 
-	set_wall_color(column.direction, &wall_color);
-	SDL_SetRenderDrawColor(gRenderer, wall_color.r, wall_color.g, wall_color.g, 0xFF);
-	SDL_RenderDrawLine(gRenderer, column.index, start_point, column.index, end_point);
+	set_wall_color(c.direction, &w_color);
+	SDL_SetRenderDrawColor(gRenderer, w_color.r, w_color.g, w_color.g, 0xFF);
+	SDL_RenderDrawLine(gRenderer, c.index, start_point, c.index, end_point);
 }
 
 /**
- * set_wall_color - Sets the wall shade based on wall direction
+ * set_wall_color - Sets the wall shade based on the direction the wall
+ * is facing
  * @direction: The direction that the wall is facing
+ * @wall_color: The wall color to be updated
  * Return: Nothing
  */
 void set_wall_color(int direction, SDL_Colour *wall_color)

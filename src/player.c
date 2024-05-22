@@ -6,12 +6,12 @@
  *
  * Return: Nothing.
  */
-void init_player(Maze_player *player)
+void init_player(MazePlayer *player)
 {
-	Maze_player p = {
-        {192, 1792},
-        45
-    };
+	MazePlayer p = {
+		{192, 1792},
+		45
+	};
 
-    *player = p;
+	*player = p;
 }

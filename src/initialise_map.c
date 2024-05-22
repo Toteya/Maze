@@ -3,15 +3,14 @@
 /**
  * init_map - Initialises the maze grid map.
  * @map_array: The map (array) to be initialised
- * @size: The size of the array (grid size)
  * Return: (bool) TRUE on success. Otherwise return FALSE.
  * Description: This function initialises the maze grid as an array of
  * wall_blocks. Each wall block has grid coordinates of its position on the map
  */
-bool init_map(Maze_wall_block map_array[])
+bool init_map(MazeWall map_array[])
 {
 	int i = 0;
-	Maze_wall_block wall_array[GRID_SIZE] = {
+	MazeWall wall_array[GRID_SIZE] = {
 		{0,0}, {1,0}, {2,0}, {3,0}, {4,0}, {5,0}, {6,0}, {7,0}, {8,0}, {9,0}, {10,0}, {11,0}, {12,0}, {13,0}, {14,0}, {15,0}, {16,0}, {17,0}, {18,0}, {19,0}, {20,0}, {21,0}, {22,0}, {23,0}, {24,0}, {25,0}, {26,0}, {27,0}, {28,0}, {29,0},
 		{0,1}, {29,1},
 		{0,2}, {29,2},
