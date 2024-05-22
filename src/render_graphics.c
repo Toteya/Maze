@@ -1,7 +1,7 @@
 #include "../inc/maze.h"
 
-void get_wall_distance(RenderColumn *, MazePlayer, MazeWall[]);
-bool check_for_wall(int x, int y, MazeWall[]);
+void getWallDistance(RenderColumn *, MazePlayer, int map[][MAP_WIDTH]);
+bool check_for_wall(int x, int y, int map[][MAP_WIDTH]);
 void draw_wall_slice(RenderColumn, int, SDL_Renderer *);
 void set_wall_color(int direction, SDL_Colour *wall_color);
 
@@ -26,7 +26,7 @@ void render_graphics(SDL_Instance *gInstance)
 	for (i = 0; i <= WINDOW_WIDTH; i++)
 	{
 		column.index = i;
-		get_wall_distance(&column, player, gInstance->map_array);
+		getWallDistance(&column, player, gInstance->map);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 
 		draw_wall_slice(column, pp_distance, gRenderer);
@@ -43,7 +43,7 @@ void render_graphics(SDL_Instance *gInstance)
  * @map_arr: The wall map array
  * Return: the distance between the ray and the wall
  */
-void get_wall_distance(RenderColumn *column, MazePlayer p, MazeWall map_arr[])
+void getWallDistance(RenderColumn *column, MazePlayer p, int map[][MAP_WIDTH])
 {
 	map_location player_pos = p.pos;
 	float view_angle = p.view_angle;
@@ -107,11 +107,11 @@ void get_wall_distance(RenderColumn *column, MazePlayer p, MazeWall map_arr[])
 		* printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n",
 		* column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);
 		*/
-		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
 		A_y_grid = (A_y - dir_y) / GRID_INTERVAL;
-		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
 
@@ -144,11 +144,11 @@ void get_wall_distance(RenderColumn *column, MazePlayer p, MazeWall map_arr[])
 		* printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n",
 		* column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);
 		*/
-		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
 		A_x_grid = (A_x - dir_x) / GRID_INTERVAL;
-		wall_found = check_for_wall(A_x_grid, A_y_grid, map_arr);
+		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
 
@@ -205,18 +205,48 @@ void get_wall_distance(RenderColumn *column, MazePlayer p, MazeWall map_arr[])
  * @map_array: The wall map array
  * Return: (bool) TRUE if there is a wall. Otherwise return FALSE.
  */
-bool check_for_wall(int x, int y, MazeWall map_array[])
+bool check_for_wall(int x, int y, int map[][MAP_WIDTH])
 {
-	int i;
-	/* Search map_array for matching wall coordinate */
-	for (i = 0; i < GRID_SIZE; i++)
-	{
-		if (map_array[i].x == x && map_array[i].y == y)
-		{
-			/* printf("Wall: {%d, %d}\n", x, y); */
-			return (true);
-		}
-	}
+/*
+	char maze_map[30][30] = {
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+	};
+*/
+	if (!((x >= 0 && x < 30) && (y >=0 && y < 30)))
+		return (false);
+
+	if (map[y][x])
+		return (true);
+
 	return (false);
 }
 
@@ -298,5 +328,4 @@ void set_wall_color(int direction, SDL_Colour *wall_color)
 		default:
 			break;
 	}
-
 }

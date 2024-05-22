@@ -11,6 +11,8 @@
 #define FIELD_OF_VIEW 60
 #define GRID_INTERVAL 64
 #define GRID_SIZE 600 /* Map size: 30 x 30 */
+#define MAP_WIDTH 30
+#define MAP_HEIGHT 30
 #define PI 3.14159265359f
 #define MOVE_STEP 5
 
@@ -116,7 +118,8 @@ typedef struct SDL_Instance
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	MazePlayer player;
-	MazeWall map_array[GRID_SIZE];
+	int map[MAP_HEIGHT][MAP_WIDTH];
+	/* MazeWall map_array[GRID_SIZE]; */
 } SDL_Instance;
 
 /**
@@ -136,7 +139,7 @@ bool init_instance(SDL_Instance *);
 int poll_events(void);
 void close_instance(SDL_Instance *);
 void render_graphics(SDL_Instance *);
-bool init_map(MazeWall[]);
+bool init_map(int map[][MAP_WIDTH]);
 void do_action(int action, MazePlayer *);
 void do_turn(int action, MazePlayer *);
 void do_move(int action, MazePlayer *);

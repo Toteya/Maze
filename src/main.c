@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-	if (init_map(gInstance.map_array) == false)
+	if (init_map(gInstance.map) == false)
 	{
 		fprintf(stderr, "Map failed to initialise\n");
 		return (EXIT_FAILURE);
