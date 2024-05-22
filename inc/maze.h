@@ -109,7 +109,7 @@ typedef struct MazePlayer
  * @window: the game window (SDL_Window)
  * @renderer: the game renderer (SDL_Renderer)
  * @player: The game player
- * @map_array: The array storing the coordinates of the walls of the map
+ * @map: The array storing the coordinates of the walls of the map
  *
  * Description: A struct representing the SDL (game) instance
  */

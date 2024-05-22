@@ -43,9 +43,9 @@ void do_turn(int action, MazePlayer *player)
 }
 
 /**
- * do_forward - Moves the player forward or backward based on the given
+ * do_move - Moves the player forward or backward based on the given
  * direction of movement
- * action: The action code specifying the direcion
+ * @action: The action code specifying the direcion
  * @player: The player
  * Return: Nothing
  */
@@ -57,7 +57,7 @@ void do_move(int action, MazePlayer *player)
 		angle_rad = to_radians(player->view_angle);
 	else
 		angle_rad = to_radians(player->view_angle + 180);
-	
+
 	printf("deg: %f, rad: %f\n", player->view_angle, angle_rad);
 
 	player->pos.x = player->pos.x + ((float) MOVE_STEP * cosf(angle_rad));
