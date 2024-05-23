@@ -6,7 +6,7 @@
  * @player: The player
  * Return: Nothing
  */
-void do_action(int action, MazePlayer *player)
+void do_action(int action, MazePlayer *player, int map[][MAP_WIDTH])
 {
 	switch (action)
 	{
@@ -17,10 +17,10 @@ void do_action(int action, MazePlayer *player)
 			do_turn(action, player);
 			break;
 		case ACTION_FORWARD:
-			do_move(action, player);
+			do_move(action, player, map);
 			break;
 		case ACTION_BACKWARD:
-			do_move(action, player);
+			do_move(action, player, map);
 			break;
 		default:
 			break;
@@ -40,6 +40,11 @@ void do_turn(int action, MazePlayer *player)
 		player->view_angle++;
 	else
 		player->view_angle--;
+	
+	if (player->view_angle > 360)
+		player->view_angle -= 360;
+	else if (player->view_angle < 0)
+		player->view_angle += 360;
 }
 
 /**
@@ -47,21 +52,28 @@ void do_turn(int action, MazePlayer *player)
  * direction of movement
  * @action: The action code specifying the direcion
  * @player: The player
+ * @map: The maze map
  * Return: Nothing
  */
-void do_move(int action, MazePlayer *player)
+void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 {
 	float angle_rad;
+	int new_x, new_y;
 
 	if (action == ACTION_FORWARD)
 		angle_rad = to_radians(player->view_angle);
 	else
 		angle_rad = to_radians(player->view_angle + 180);
 
-	printf("deg: %f, rad: %f\n", player->view_angle, angle_rad);
+	/* printf("deg: %f, rad: %f\n", player->view_angle, angle_rad); */
 
-	player->pos.x = player->pos.x + ((float) MOVE_STEP * cosf(angle_rad));
-	player->pos.y = player->pos.y - ((float) MOVE_STEP * sinf(angle_rad));
+	new_x = player->pos.x + ((float) MOVE_STEP * cosf(angle_rad));
+	new_y = player->pos.y - ((float) MOVE_STEP * sinf(angle_rad));
 
+	if (!check_for_wall(new_x, new_y, map))
+	{
+		player->pos.x = new_x;
+		player->pos.y = new_y;
+	}
 	/* printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y); */
 }

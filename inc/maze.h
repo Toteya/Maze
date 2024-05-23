@@ -9,12 +9,14 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 #define FIELD_OF_VIEW 60
-#define GRID_INTERVAL 64
-#define GRID_SIZE 600 /* Map size: 30 x 30 */
+#define GRID_INTERVAL 128
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 30
 #define PI 3.14159265359f
 #define MOVE_STEP 5
+#define PLAYER_START_POS_X 1856
+#define PLAYER_START_POS_Y 704
+#define PLAYER_START_VIEW_ANGLE 240
 
 #define Y_DIRECTION_UP -1
 #define Y_DIRECTION_DOWN 1
@@ -22,7 +24,6 @@
 #define X_DIRECTION_LEFT -1
 #define X_DIRECTION_RIGHT 1
 #define X_DIRECTION_NONE 0
-
 
 /**
  * enum Action_Code - action codes corresponding to an event
@@ -140,9 +141,10 @@ int poll_events(void);
 void close_instance(SDL_Instance *);
 void render_graphics(SDL_Instance *);
 bool init_map(int map[][MAP_WIDTH]);
-void do_action(int action, MazePlayer *);
+bool check_for_wall(int x, int y, int map[][MAP_WIDTH]);
+void do_action(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void do_turn(int action, MazePlayer *);
-void do_move(int action, MazePlayer *);
+void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
 

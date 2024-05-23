@@ -40,9 +40,8 @@ int main(int argc, char *argv[])
 		action = poll_events();
 		if (action < 0)
 			break;
-		do_action(action, &(gInstance.player));
+		do_action(action, &(gInstance.player), gInstance.map);
 
-		/* Todo: Render */
 		render_graphics(&gInstance);
 	}
 

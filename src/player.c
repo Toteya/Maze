@@ -9,8 +9,8 @@
 void init_player(MazePlayer *player)
 {
 	MazePlayer p = {
-		{192, 1792},
-		45
+		{PLAYER_START_POS_X, PLAYER_START_POS_Y},
+		PLAYER_START_VIEW_ANGLE
 	};
 
 	*player = p;
