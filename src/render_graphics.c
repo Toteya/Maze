@@ -19,7 +19,7 @@ void render_graphics(SDL_Instance *gInstance)
 
 	pp_distance = (WINDOW_WIDTH / 2) / (tanf(to_radians(FIELD_OF_VIEW / 2)));
 
-	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(gRenderer, 0xEF, 0xB9, 0x6E, 0xFF);
 	SDL_RenderClear(gRenderer);
 
 	for (i = 0; i <= WINDOW_WIDTH; i++)
