@@ -70,16 +70,16 @@ enum Wall_Direction
 
 
 /**
- * struct map_location - Position on the map (x-y coordinates)
+ * struct map_coordinate - Position on the map (x-y coordinates)
  * @x: The x-coordinate of the position
  * @y: The y-coordinate of the position
  * Description: The x and y coordinates of a point on the map
  */
-typedef struct map_location
+typedef struct map_coordinate
 {
 	int x;
 	int y;
-} map_location;
+} map_coordinate;
 
 /**
  * struct MazeWall_block - A wall block (cube) in the map
@@ -101,7 +101,7 @@ typedef struct MazeWall_block
  */
 typedef struct MazePlayer
 {
-	map_location pos;
+	map_coordinate pos;
 	float view_angle;
 } MazePlayer;
 
@@ -147,6 +147,7 @@ void do_turn(int action, MazePlayer *);
 void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
+void getWallDistance(RenderColumn *, MazePlayer, int map[][MAP_WIDTH]);
 
 
 #endif /* MAZE_H */

@@ -40,7 +40,7 @@ void do_turn(int action, MazePlayer *player)
 		player->view_angle++;
 	else
 		player->view_angle--;
-	
+
 	if (player->view_angle > 360)
 		player->view_angle -= 360;
 	else if (player->view_angle < 0)
