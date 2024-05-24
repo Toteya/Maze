@@ -73,8 +73,8 @@ void draw_wall_slice(RenderColumn c, int pp_dist, SDL_Renderer *gRenderer)
 void set_wall_color(int direction, SDL_Colour *wall_color)
 {
 	/**
-	 * Natural grey: #8c867f -> 
-	 * 
+	 * Natural grey: #8c867f ->
+	 *
 	 */
 	switch (direction)
 	{

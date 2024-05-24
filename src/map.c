@@ -3,14 +3,17 @@
 /**
  * init_map - Initialises the maze grid map.
  * @map: A 2D-array (representing a map) to be initialised
+ * @filename: Name of the file containing the map data (format .CSV)
  * Return: (bool) TRUE on success. Otherwise return FALSE.
- * Description: This function initialises the maze grid as an array of
- * wall_blocks. Each wall block has grid coordinates of its position on the map
+ * Description: This function initialises the maze grid as a 2D-array
+ * representing a map.
+ * Each element respresents a specific coordinate on a grid, indicating the
+ * presence or absence of a wall, as well as other information.
  */
 bool init_map(int map[][MAP_WIDTH], char *filename)
 {
 	FILE *fp;
-	char buff[MAP_WIDTH * 3]; /* Sufficiently large buffer for one line of the file */
+	char buff[MAP_WIDTH * 3]; /* Sufficiently large buffer for one line */
 	char *token = NULL;
 	int i, j;
 
@@ -18,7 +21,7 @@ bool init_map(int map[][MAP_WIDTH], char *filename)
 	if (fp == NULL)
 	{
 		fprintf(stderr, "Could not open file %s\n", filename);
-		return false;
+		return (false);
 	}
 
 	i = 0;

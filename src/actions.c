@@ -4,6 +4,7 @@
  * do_action - Performs an action according to the given action code
  * @action: The code specifying the action to performed
  * @player: The player
+ * @map: The maze map
  * Return: Nothing
  */
 void do_action(int action, MazePlayer *player, int map[][MAP_WIDTH])
@@ -73,7 +74,7 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 
 	A_x_grid = new_x / GRID_INTERVAL;
 	A_y_grid = new_y / GRID_INTERVAL;
-	
+
 	if (!check_for_wall(A_x_grid, A_y_grid, map))
 	{
 		player->pos.x = new_x;
