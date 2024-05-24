@@ -1,6 +1,9 @@
 #include <SDL2/SDL.h>
 #include "../inc/maze.h"
 
+
+void game_loop(SDL_Instance gInstance);
+
 /**
  * main - Entry point to the Maze game
  * A player navigates through a maze and tries to overcomes obstacles
@@ -12,9 +15,6 @@ int main(int argc, char *argv[])
 {
 	SDL_Instance gInstance;
 	char *map_filename = "maze_map.csv";
-	int action;
-	/* bool quit = false; */
-	/* Maze_wall_block map_array[GRID_SIZE]; */
 
 	(void) argv;
 	(void) argc;
@@ -33,9 +33,23 @@ int main(int argc, char *argv[])
 
 	init_player(&(gInstance.player));
 
-	/* Todo: load media */
+	/* TODO: load media */
 
-	/* Start game loop */
+	game_loop(gInstance);
+
+	close_instance(&gInstance);
+
+	return (EXIT_SUCCESS);
+}
+
+/**
+ * game_loop - The main game loop
+ * @gInstance: The maze game SDL instance
+ * Return: Nothing
+ */
+ void game_loop(SDL_Instance gInstance)
+ {
+	int action;
 	while (true)
 	{
 		action = poll_events();
@@ -45,8 +59,4 @@ int main(int argc, char *argv[])
 
 		render_graphics(&gInstance);
 	}
-
-	close_instance(&gInstance);
-
-	return (EXIT_SUCCESS);
-}
+ }

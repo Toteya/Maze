@@ -1,6 +1,6 @@
 #include "../inc/maze.h"
 
-void draw_wall_slice(RenderColumn, int, SDL_Renderer *);
+void drawWallSlice(RenderColumn, int, SDL_Renderer *);
 void set_wall_color(int direction, SDL_Colour *wall_color);
 
 /**
@@ -27,7 +27,7 @@ void render_graphics(SDL_Instance *gInstance)
 		getWallDistance(&column, player, gInstance->map);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 
-		draw_wall_slice(column, pp_distance, gRenderer);
+		drawWallSlice(column, pp_distance, gRenderer);
 	}
 
 	SDL_RenderPresent(gRenderer);
@@ -36,20 +36,20 @@ void render_graphics(SDL_Instance *gInstance)
 
 
 /**
- * draw_wall_slice - Draws a wall slice onto the projection plane
+ * drawWallSlice - Draws a wall slice onto the projection plane
  * @pp_dist: The distance from the player to the projection plane
- * @c: The column to be rendered
+ * @column: The column to be rendered
  * @gRenderer: The SDL renderer
  * Return: Nothing
  */
-void draw_wall_slice(RenderColumn c, int pp_dist, SDL_Renderer *gRenderer)
+void drawWallSlice(RenderColumn column, int pp_dist, SDL_Renderer *gRenderer)
 {
 	int wall_height = GRID_INTERVAL; /* Actual wall height*/
 	int proj_height; /* Wall projection height */
 	int start_point, end_point;
 	SDL_Color w_color;
 
-	proj_height = wall_height * ((float) pp_dist / c.distance);
+	proj_height = wall_height * ((float) pp_dist / column.distance);
 	/**
 	* printf("col: %d, Dw: %d, Dp: %d, Hw: %d, Hp: %d\n",
 	* column, wall_distance, pp_distance, wall_height, proj_height);
@@ -58,9 +58,10 @@ void draw_wall_slice(RenderColumn c, int pp_dist, SDL_Renderer *gRenderer)
 	start_point = (WINDOW_HEIGHT / 2) - (proj_height / 2);
 	end_point = start_point + proj_height;
 
-	set_wall_color(c.direction, &w_color);
+	set_wall_color(column.direction, &w_color);
 	SDL_SetRenderDrawColor(gRenderer, w_color.r, w_color.g, w_color.g, 0xFF);
-	SDL_RenderDrawLine(gRenderer, c.index, start_point, c.index, end_point);
+	SDL_RenderDrawLine(gRenderer, column.index, start_point, column.index,
+	end_point);
 }
 
 /**
