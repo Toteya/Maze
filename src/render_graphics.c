@@ -78,25 +78,25 @@ void set_wall_color(int direction, SDL_Colour *wall_color)
 	 */
 	switch (direction)
 	{
-		case NORTH:
+		case MAZE_NORTH:
 			wall_color->r = 0x58;
 			wall_color->g = 0x53;
 			wall_color->b = 0x4B;
 			wall_color->a = 0xFF;
 			break;
-		case SOUTH:
+		case MAZE_SOUTH:
 			wall_color->r = 0xAF;
 			wall_color->g = 0xA5;
 			wall_color->b = 0x96;
 			wall_color->a = 0xFF;
 			break;
-		case EAST:
+		case MAZE_EAST:
 			wall_color->r = 0x7A;
 			wall_color->g = 0x73;
 			wall_color->b = 0x69;
 			wall_color->a = 0xFF;
 			break;
-		case WEST:
+		case MAZE_WEST:
 			wall_color->r = 0x8C;
 			wall_color->g = 0x84;
 			wall_color->b = 0x78;

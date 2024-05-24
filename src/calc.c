@@ -1,10 +1,12 @@
 #include "../inc/maze.h"
 
 int fix_distortion(float distance, float view_angle, float ray_angle);
-float getDistToHorizonalWall(MazePlayer player, int map[][MAP_WIDTH],
+float getDistToHorizonalWall(MazePlayer, int map[][MAP_WIDTH],
 int dir_x, int dir_y, float ray_angle);
-float getDistToVerticalWall(MazePlayer player, int map[][MAP_WIDTH],
+float getDistToVerticalWall(MazePlayer, int map[][MAP_WIDTH],
 int dir_x, int dir_y, float ray_angle);
+float selectDistance(float distToHorWall, float distToVertWall,
+int dir_x, int dir_y, RenderColumn *column);
 
 /**
  * to_radians - Converts degrees to radians
@@ -63,42 +65,64 @@ int map[][MAP_WIDTH])
 	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y, ray_angle);
 	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y, ray_angle);
 
-	/* NOTE: potential bug - CASE: distance is correctly ZERO*/
-	if (distToHorWall)
-	{
-		distance = fabs(distToHorWall);
-		if (dir_y == Y_DIRECTION_UP)
-			column->direction = SOUTH;
-		else
-			column->direction = NORTH;
-	}
-	else
-	{
-		distance = fabs(distToVertWall);
-		if (dir_x == X_DIRECTION_LEFT)
-			column->direction = EAST;
-		else
-			column->direction = WEST;
-	}
-	if (distToVertWall && fabs(distToVertWall) < fabs(distToHorWall))
-	{
-		distance = fabs(distToVertWall);
-		if (dir_x == X_DIRECTION_LEFT)
-			column->direction = EAST;
-		else
-			column->direction = WEST;
-	}
+	distance = selectDistance(distToHorWall, distToVertWall, dir_x, dir_y,
+	column);
 
 	column->distance = fix_distortion(distance, view_angle, ray_angle);
 }
 
 /**
+ * selectDistance - Compares the distance to a horizontal wall intersection
+ * with the distance to a vertical wall intersection and selects the shorter
+ * one.
+ * @distToHorWall: Distance from the player to a horizontal wall intersection.
+ * @distToVertWall: Distance from the player to a vertical wall intersection.
+ * @dir_x: The x-direction of the ray (LEFT or RIGHT)
+ * @dir_y: The y-direction of the ray (UP or DOWN)
+ * @column: The ray's column to be rendered.
+ * Return: the selected distance
+ */
+float selectDistance(float distToHorWall, float distToVertWall,
+int dir_x, int dir_y, RenderColumn *column)
+{
+	float distance;
+	/* NOTE: potential bug - CASE: distance is correctly ZERO*/
+	if (distToHorWall)
+	{
+		distance = fabs(distToHorWall);
+		if (dir_y == Y_DIRECTION_UP)
+			column->direction = MAZE_SOUTH;
+		else
+			column->direction = MAZE_NORTH;
+	}
+	else
+	{
+		distance = fabs(distToVertWall);
+		if (dir_x == X_DIRECTION_LEFT)
+			column->direction = MAZE_EAST;
+		else
+			column->direction = MAZE_WEST;
+	}
+	if (distToVertWall && fabs(distToVertWall) < fabs(distToHorWall))
+	{
+		distance = fabs(distToVertWall);
+		if (dir_x == X_DIRECTION_LEFT)
+			column->direction = MAZE_EAST;
+		else
+			column->direction = MAZE_WEST;
+	}
+
+	return (distance);
+}
+
+/**
  * getDistToHorizontalWall - Calculates the distance from the player to the
- * closest horizontal intersection with a wall for the given ray angle / column
+ * closest horizontal intersection of a ray and a wall for the given
+ * ray angle / column
  * @player: The player
  * @map: The maze map
- * @dir_x: The x-direction of the ray
- * @dir_y: The y-direction of the ray
+ * @dir_x: The x-direction of the ray (LEFT or RIGHT)
+ * @dir_y: The y-direction of the ray (UP or DOWN)
  * @ray_angle: The ray's angle
  * Return: Distance to wall
  */
@@ -154,7 +178,8 @@ int dir_x, int dir_y, float ray_angle)
 
 /**
  * getDistToVerticalWall - Calculates the distance from the player to the
- * closest vertical intersection with a wall for the given ray angle / column
+ * closest vertical intersection of a ray and a wall for the given
+ * ray angle / column
  * @player: The player
  * @map: The maze map
  * @dir_x: The x-direction of the ray

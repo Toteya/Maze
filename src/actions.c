@@ -80,5 +80,5 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 		player->pos.x = new_x;
 		player->pos.y = new_y;
 	}
-	printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y);
+	/* printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y); */
 }

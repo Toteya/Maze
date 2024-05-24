@@ -53,18 +53,18 @@ enum Action_Code
 
 /**
  * enum Wall_Direction - The direction that a wall is facing
- * @NORTH: North
- * @EAST: East
- * @SOUTH: South
- * @WEST: West
+ * @MAZE_NORTH: North
+ * @MAZE_EAST: East
+ * @MAZE_SOUTH: South
+ * @MAZE_WEST: West
  * Description: Provides a unique code representing the direction of the wall
  */
 enum Wall_Direction
 {
-	NORTH = 1,
-	EAST,
-	SOUTH,
-	WEST
+	MAZE_NORTH = 1,
+	MAZE_EAST,
+	MAZE_SOUTH,
+	MAZE_WEST
 };
 
 
