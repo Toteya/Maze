@@ -59,6 +59,7 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 {
 	float angle_rad;
 	int new_x, new_y;
+	int A_x_grid = 0, A_y_grid = 0; /* Grid coordinates */
 
 	if (action == ACTION_FORWARD)
 		angle_rad = to_radians(player->view_angle);
@@ -70,10 +71,13 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 	new_x = player->pos.x + ((float) MOVE_STEP * cosf(angle_rad));
 	new_y = player->pos.y - ((float) MOVE_STEP * sinf(angle_rad));
 
-	if (!check_for_wall(new_x, new_y, map))
+	A_x_grid = new_x / GRID_INTERVAL;
+	A_y_grid = new_y / GRID_INTERVAL;
+	
+	if (!check_for_wall(A_x_grid, A_y_grid, map))
 	{
 		player->pos.x = new_x;
 		player->pos.y = new_y;
 	}
-	/* printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y); */
+	printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y);
 }

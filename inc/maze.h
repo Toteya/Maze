@@ -14,9 +14,9 @@
 #define MAP_HEIGHT 30
 #define PI 3.14159265359f
 #define MOVE_STEP 5
-#define PLAYER_START_POS_X 1856
-#define PLAYER_START_POS_Y 704
-#define PLAYER_START_VIEW_ANGLE 240
+#define PLAYER_START_POS_X 384
+#define PLAYER_START_POS_Y 3584
+#define PLAYER_START_VIEW_ANGLE 45
 
 #define Y_DIRECTION_UP -1
 #define Y_DIRECTION_DOWN 1
@@ -82,18 +82,6 @@ typedef struct map_coordinate
 } map_coordinate;
 
 /**
- * struct MazeWall_block - A wall block (cube) in the map
- * @x: The x-coordinate on the grid
- * @y: the y-coordinate on the grid
- * Description: The building block cube of a wall on the map
- */
-typedef struct MazeWall_block
-{
-	int x;
-	int y;
-} MazeWall;
-
-/**
  * struct MazePlayer - A player
  * @pos: The location (coordinates) of the player on the map
  * @view_angle: The viewing angle of the player
@@ -140,7 +128,7 @@ bool init_instance(SDL_Instance *);
 int poll_events(void);
 void close_instance(SDL_Instance *);
 void render_graphics(SDL_Instance *);
-bool init_map(int map[][MAP_WIDTH]);
+bool init_map(int map[][MAP_WIDTH], char *filename);
 bool check_for_wall(int x, int y, int map[][MAP_WIDTH]);
 void do_action(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void do_turn(int action, MazePlayer *);

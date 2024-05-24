@@ -10,9 +10,10 @@
  */
 int main(int argc, char *argv[])
 {
-	/* bool quit = false; */
-	int action;
 	SDL_Instance gInstance;
+	char *map_filename = "maze_map.csv";
+	int action;
+	/* bool quit = false; */
 	/* Maze_wall_block map_array[GRID_SIZE]; */
 
 	(void) argv;
@@ -24,7 +25,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-	if (init_map(gInstance.map) == false)
+	if (init_map(gInstance.map, map_filename) == false)
 	{
 		fprintf(stderr, "Map failed to initialise\n");
 		return (EXIT_FAILURE);

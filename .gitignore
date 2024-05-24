@@ -4,3 +4,4 @@ Makefile
 .vscode
 src/maze
 a.out
+*.csv
