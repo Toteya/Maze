@@ -16,8 +16,6 @@ int main(int argc, char *argv[])
 	SDL_Instance gInstance;
 	char *map_filename = "maze_map.csv";
 
-	(void) argv;
-	(void) argc;
 
 	/* Initialise game instance */
 	if (init_instance(&gInstance) == false)
@@ -25,6 +23,8 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
+	if (argc > 1)
+		map_filename = argv[1];
 	if (init_map(gInstance.map, map_filename) == false)
 	{
 		fprintf(stderr, "Map failed to initialise\n");
