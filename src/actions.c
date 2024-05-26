@@ -69,8 +69,8 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 
 	/* printf("deg: %f, rad: %f\n", player->view_angle, angle_rad); */
 
-	new_x = player->pos.x + ((float) MOVE_STEP * cosf(angle_rad));
-	new_y = player->pos.y - ((float) MOVE_STEP * sinf(angle_rad));
+	new_x = roundf(player->pos.x + ((float) MOVE_STEP * cosf(angle_rad)));
+	new_y = roundf(player->pos.y - ((float) MOVE_STEP * sinf(angle_rad)));
 
 	A_x_grid = new_x / GRID_INTERVAL;
 	A_y_grid = new_y / GRID_INTERVAL;
