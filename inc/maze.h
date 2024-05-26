@@ -95,8 +95,10 @@ typedef struct MazePlayer
 } MazePlayer;
 
 /**
- * struct WTexture - 
- *
+ * struct WTexture - A Texture
+ * @mTexture: The SDL Texture
+ * @width: The texture's width
+ * @height: The texture's height
  */
 typedef struct WTexture
 {
@@ -111,6 +113,7 @@ typedef struct WTexture
  * @renderer: the game renderer (SDL_Renderer)
  * @player: The game player
  * @map: The array storing the coordinates of the walls of the map
+ * @texture: A texture
  *
  * Description: A struct representing the SDL (game) instance
  */
@@ -128,6 +131,7 @@ typedef struct SDL_Instance
  * @index: the column number / position on the screen
  * @distance: the distance from the column to the player
  * @direction: the direction of the column is facing
+ * @wall_pos: the column's position on a wall block
  */
 typedef struct MazeRender_Column
 {
@@ -149,8 +153,9 @@ void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
 void getWallDistance(RenderColumn *, MazePlayer, int map[][MAP_WIDTH]);
-void initTexture(WTexture *texture);
-void renderTexture(SDL_Instance *gInstance, int x, int y, int height, int wall_pos);
+void init_Texture(WTexture *texture);
+void renderTexture(SDL_Instance *gInstance, int x, int y, int height,
+int wall_pos);
 bool loadTextureFromFile(SDL_Instance *gInstance, char *filepath);
 
 #endif /* MAZE_H */

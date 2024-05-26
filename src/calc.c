@@ -53,8 +53,10 @@ int map[][MAP_WIDTH])
 	else
 		dir_x = X_DIRECTION_NONE; /* The ray is purely vertical */
 
-	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y, ray_angle, &wallPosHor);
-	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y, ray_angle, &wallPosVer);
+	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y,
+	ray_angle, &wallPosHor);
+	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y,
+	ray_angle, &wallPosVer);
 
 	distance = selectDistance(distToHorWall, distToVertWall, dir_x, dir_y,
 	column, wallPosHor, wallPosVer);
@@ -71,6 +73,8 @@ int map[][MAP_WIDTH])
  * @dir_x: The x-direction of the ray (LEFT or RIGHT)
  * @dir_y: The y-direction of the ray (UP or DOWN)
  * @column: The ray's column to be rendered.
+ * @wallPosHor: The ray's position on the horizontal wall
+ * @wallPosVer: The ray's position on the vertical wall
  * Return: the selected distance
  */
 float selectDistance(float distToHorWall, float distToVertWall,
@@ -118,6 +122,7 @@ int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer)
  * @dir_x: The x-direction of the ray (LEFT or RIGHT)
  * @dir_y: The y-direction of the ray (UP or DOWN)
  * @ray_angle: The ray's angle
+ * @wallPos: The position of the ray on the wall block
  * Return: Distance to wall
  */
 float getDistToHorizonalWall(MazePlayer player, int map[][MAP_WIDTH],
@@ -165,14 +170,9 @@ int dir_x, int dir_y, float ray_angle, int *wallPos)
 			distanceToHorWall =  (player.pos.x - A_x) / cosf(to_radians(ray_angle));
 		else
 			distanceToHorWall = A_y - player.pos.y;
-		
+
 		if (dir_x > 0)
-		{
 			*wallPos = A_x - ((int)A_x / GRID_INTERVAL) * GRID_INTERVAL;
-			/*
-			printf("wallpos: %d, A_x: %f, GW: %d\n", *wallPos, A_x, GRID_INTERVAL);
-			*/
-		}
 		else
 			*wallPos = GRID_INTERVAL - (A_x - ((int)A_x / GRID_INTERVAL * GRID_INTERVAL));
 	}
@@ -189,6 +189,7 @@ int dir_x, int dir_y, float ray_angle, int *wallPos)
  * @dir_x: The x-direction of the ray
  * @dir_y: The y-direction of the ray
  * @ray_angle: The ray's angle
+ * @wallPos: The position of the ray on the wall block
  * Return: Distance to wall
  */
 float getDistToVerticalWall(MazePlayer player, int map[][MAP_WIDTH],
@@ -232,7 +233,7 @@ int dir_x, int dir_y, float ray_angle, int *wallPos)
 
 	if (wall_found)
 	{
-		distanceToVertWall = (player.pos.x - A_x) / cosf(to_radians(ray_angle));	
+		distanceToVertWall = (player.pos.x - A_x) / cosf(to_radians(ray_angle));
 		if (dir_y > 0)
 			*wallPos = A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL);
 		else

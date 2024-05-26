@@ -41,7 +41,7 @@ void render_graphics(SDL_Instance *gInstance)
  * drawWallSlice - Draws a wall slice onto the projection plane
  * @pp_dist: The distance from the player to the projection plane
  * @column: The column to be rendered
- * @gRenderer: The SDL renderer
+ * @gInstance: The maze game SDL instance
  * Return: Nothing
  */
 void drawWallSlice(RenderColumn column, int pp_dist, SDL_Instance *gInstance)

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
 	init_player(&(gInstance.player));
 
-	initTexture(&(gInstance.texture));
+	init_Texture(&(gInstance.texture));
 
 	if (!loadTextureFromFile(&gInstance, "images/wall_texture_02.png"))
 		fprintf(stderr, "Failed to load texture from file.\n");
