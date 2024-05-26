@@ -2,6 +2,7 @@
 #define MAZE_H
 
 #include <SDL2/SDL.h>
+#include <SDL_image.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
@@ -94,6 +95,17 @@ typedef struct MazePlayer
 } MazePlayer;
 
 /**
+ * struct WTexture - 
+ *
+ */
+typedef struct WTexture
+{
+	SDL_Texture *mTexture;
+	int width;
+	int height;
+} WTexture;
+
+/**
  * struct SDL_Instance - an SDL instance / game instance
  * @window: the game window (SDL_Window)
  * @renderer: the game renderer (SDL_Renderer)
@@ -107,8 +119,8 @@ typedef struct SDL_Instance
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	MazePlayer player;
+	WTexture texture;
 	int map[MAP_HEIGHT][MAP_WIDTH];
-	/* MazeWall map_array[GRID_SIZE]; */
 } SDL_Instance;
 
 /**
@@ -122,6 +134,7 @@ typedef struct MazeRender_Column
 	int index;
 	int distance;
 	int direction;
+	int wall_pos; /* Position on the wall from 0 to GRID interval length */
 } RenderColumn;
 
 bool init_instance(SDL_Instance *);
@@ -136,6 +149,8 @@ void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
 void getWallDistance(RenderColumn *, MazePlayer, int map[][MAP_WIDTH]);
-
+void initTexture(WTexture *texture);
+void renderTexture(SDL_Instance *gInstance, int x, int y, int height, int wall_pos);
+bool loadTextureFromFile(SDL_Instance *gInstance, char *filepath);
 
 #endif /* MAZE_H */

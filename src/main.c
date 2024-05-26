@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
 	SDL_Instance gInstance;
 	char *map_filename = "maze_map.csv";
 
-
 	/* Initialise game instance */
 	if (init_instance(&gInstance) == false)
 	{
@@ -33,6 +32,11 @@ int main(int argc, char *argv[])
 
 	init_player(&(gInstance.player));
 
+	initTexture(&(gInstance.texture));
+
+	if (!loadTextureFromFile(&gInstance, "images/wall_texture_02.png"))
+		fprintf(stderr, "Failed to load texture from file.\n");
+
 	/* TODO: load media */
 
 	game_loop(gInstance);
@@ -47,16 +51,17 @@ int main(int argc, char *argv[])
  * @gInstance: The maze game SDL instance
  * Return: Nothing
  */
- void game_loop(SDL_Instance gInstance)
- {
+void game_loop(SDL_Instance gInstance)
+{
 	int action;
+
 	while (true)
 	{
 		action = poll_events();
-		if (action < 0)
+		if (action == ACTION_QUIT)
 			break;
-		do_action(action, &(gInstance.player), gInstance.map);
 
+		do_action(action, &(gInstance.player), gInstance.map);
 		render_graphics(&gInstance);
 	}
- }
+}

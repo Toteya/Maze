@@ -58,5 +58,7 @@ void close_instance(SDL_Instance *gInstance)
 {
 	SDL_DestroyRenderer(gInstance->renderer);
 	SDL_DestroyWindow(gInstance->window);
+	gInstance->renderer = NULL;
+	gInstance->window = NULL;
 	SDL_Quit();
 }

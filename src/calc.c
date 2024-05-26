@@ -2,11 +2,11 @@
 
 int fix_distortion(float distance, float view_angle, float ray_angle);
 float getDistToHorizonalWall(MazePlayer, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle);
+int dir_x, int dir_y, float ray_angle, int *wallPos);
 float getDistToVerticalWall(MazePlayer, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle);
+int dir_x, int dir_y, float ray_angle, int *wallPos);
 float selectDistance(float distToHorWall, float distToVertWall,
-int dir_x, int dir_y, RenderColumn *column);
+int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer);
 
 
 /**
@@ -25,6 +25,8 @@ int map[][MAP_WIDTH])
 	float ray_angle;
 	float distToVertWall = 0; /* distance to vertical wall intersect */
 	float distToHorWall = 0; /* distance to horizontal wall intersect */
+	int wallPosHor = 0;
+	int wallPosVer = 0;
 	float distance; /* Distance from player viewpoint to wall*/
 	int dir_y, dir_x; /* Direction of ray in y and x axes*/
 
@@ -51,11 +53,11 @@ int map[][MAP_WIDTH])
 	else
 		dir_x = X_DIRECTION_NONE; /* The ray is purely vertical */
 
-	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y, ray_angle);
-	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y, ray_angle);
+	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y, ray_angle, &wallPosHor);
+	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y, ray_angle, &wallPosVer);
 
 	distance = selectDistance(distToHorWall, distToVertWall, dir_x, dir_y,
-	column);
+	column, wallPosHor, wallPosVer);
 
 	column->distance = fix_distortion(distance, view_angle, ray_angle);
 }
@@ -72,13 +74,14 @@ int map[][MAP_WIDTH])
  * Return: the selected distance
  */
 float selectDistance(float distToHorWall, float distToVertWall,
-int dir_x, int dir_y, RenderColumn *column)
+int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer)
 {
 	float distance;
 	/* NOTE: potential bug - CASE: distance is correctly ZERO*/
 	if (distToHorWall)
 	{
 		distance = fabs(distToHorWall);
+		column->wall_pos = wallPosHor;
 		if (dir_y == Y_DIRECTION_UP)
 			column->direction = MAZE_SOUTH;
 		else
@@ -87,6 +90,7 @@ int dir_x, int dir_y, RenderColumn *column)
 	else
 	{
 		distance = fabs(distToVertWall);
+		column->wall_pos = wallPosVer;
 		if (dir_x == X_DIRECTION_LEFT)
 			column->direction = MAZE_EAST;
 		else
@@ -95,6 +99,7 @@ int dir_x, int dir_y, RenderColumn *column)
 	if (distToVertWall && fabs(distToVertWall) < fabs(distToHorWall))
 	{
 		distance = fabs(distToVertWall);
+		column->wall_pos = wallPosVer;
 		if (dir_x == X_DIRECTION_LEFT)
 			column->direction = MAZE_EAST;
 		else
@@ -116,7 +121,7 @@ int dir_x, int dir_y, RenderColumn *column)
  * Return: Distance to wall
  */
 float getDistToHorizonalWall(MazePlayer player, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle)
+int dir_x, int dir_y, float ray_angle, int *wallPos)
 {
 	float distanceToHorWall = 0;
 	float A_x, A_y; /* x- and y- distances to grid intersection */
@@ -160,6 +165,16 @@ int dir_x, int dir_y, float ray_angle)
 			distanceToHorWall =  (player.pos.x - A_x) / cosf(to_radians(ray_angle));
 		else
 			distanceToHorWall = A_y - player.pos.y;
+		
+		if (dir_x > 0)
+		{
+			*wallPos = A_x - ((int)A_x / GRID_INTERVAL) * GRID_INTERVAL;
+			/*
+			printf("wallpos: %d, A_x: %f, GW: %d\n", *wallPos, A_x, GRID_INTERVAL);
+			*/
+		}
+		else
+			*wallPos = GRID_INTERVAL - (A_x - ((int)A_x / GRID_INTERVAL * GRID_INTERVAL));
 	}
 
 	return (distanceToHorWall);
@@ -177,7 +192,7 @@ int dir_x, int dir_y, float ray_angle)
  * Return: Distance to wall
  */
 float getDistToVerticalWall(MazePlayer player, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle)
+int dir_x, int dir_y, float ray_angle, int *wallPos)
 {
 	float distanceToVertWall = 0;
 	float A_x, A_y; /* x and y distances to grid intersection */
@@ -217,12 +232,12 @@ int dir_x, int dir_y, float ray_angle)
 
 	if (wall_found)
 	{
-		if (dir_y)
-			distanceToVertWall = (player.pos.x - A_x) / cosf(to_radians(ray_angle));
+		distanceToVertWall = (player.pos.x - A_x) / cosf(to_radians(ray_angle));	
+		if (dir_y > 0)
+			*wallPos = A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL);
 		else
-			distanceToVertWall = A_x - player.pos.x;
+			*wallPos = GRID_INTERVAL - (A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL));
 	}
-
 	return (distanceToVertWall);
 }
 
