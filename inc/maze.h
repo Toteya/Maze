@@ -14,10 +14,11 @@
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 30
 #define PI 3.14159265359f
-#define MOVE_STEP 5
+#define MOVE_STEP 1
 #define PLAYER_START_POS_X 384
 #define PLAYER_START_POS_Y 3584
 #define PLAYER_START_VIEW_ANGLE 45
+#define MAX_ACTIONS 10 /* Maximum number of simultaneous actions to be polled*/
 
 #define Y_DIRECTION_UP -1
 #define Y_DIRECTION_DOWN 1
@@ -32,10 +33,12 @@
  * @ACTION_NONE: No action required
  * @ACTION_UP: Move/pan/rotate up
  * @ACTION_DOWN: Move/pan/rotate down
- * @ACTION_LEFT: Move/pan/rotate left
- * @ACTION_RIGHT: Move/pan/rotate right
- * @ACTION_FORWARD: move forward
- * @ACTION_BACKWARD: move backward
+ * @ACTION_TURN_LEFT: rotate/turn left
+ * @ACTION_TURN_RIGHT: rotate/turn right
+ * @ACTION_MOVE_FORWARD: move forward
+ * @ACTION_MOVE_BACKWARD: move backward
+ * @ACTION_MOVE_LEFT: pan/move left
+ * @ACTION_MOVE_RIGHT: pan/move right
  *
  * Description: The enum provides unique action codes for the action
  * to be taken that corresponds to an event that has been polled
@@ -46,10 +49,12 @@ enum Action_Code
 	ACTION_NONE,
 	ACTION_UP,
 	ACTION_DOWN,
-	ACTION_LEFT,
-	ACTION_RIGHT,
-	ACTION_FORWARD,
-	ACTION_BACKWARD
+	ACTION_TURN_LEFT,
+	ACTION_TURN_RIGHT,
+	ACTION_MOVE_FORWARD,
+	ACTION_MOVE_BACKWARD,
+	ACTION_MOVE_LEFT,
+	ACTION_MOVE_RIGHT
 };
 
 /**
@@ -142,12 +147,12 @@ typedef struct MazeRender_Column
 } RenderColumn;
 
 bool init_instance(SDL_Instance *);
-int poll_events(void);
+bool poll_events(int actions[]);
 void close_instance(SDL_Instance *);
 void render_graphics(SDL_Instance *);
 bool init_map(int map[][MAP_WIDTH], char *filename);
 bool check_for_wall(int x, int y, int map[][MAP_WIDTH]);
-void do_action(int action, MazePlayer *, int map[][MAP_WIDTH]);
+void do_action(int action[], MazePlayer *, int map[][MAP_WIDTH]);
 void do_turn(int action, MazePlayer *);
 void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
@@ -157,5 +162,6 @@ void init_Texture(WTexture *texture);
 void renderTexture(SDL_Instance *gInstance, int x, int y, int height,
 int wall_pos);
 bool loadTextureFromFile(SDL_Instance *gInstance, char *filepath);
+void clear_actions(int actions[]);
 
 #endif /* MAZE_H */

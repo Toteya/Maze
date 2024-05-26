@@ -7,24 +7,36 @@
  * @map: The maze map
  * Return: Nothing
  */
-void do_action(int action, MazePlayer *player, int map[][MAP_WIDTH])
+void do_action(int actions[], MazePlayer *player, int map[][MAP_WIDTH])
 {
-	switch (action)
+	int i = 0;
+
+	while(actions[i])
 	{
-		case ACTION_LEFT:
-			do_turn(action, player);
-			break;
-		case ACTION_RIGHT:
-			do_turn(action, player);
-			break;
-		case ACTION_FORWARD:
-			do_move(action, player, map);
-			break;
-		case ACTION_BACKWARD:
-			do_move(action, player, map);
-			break;
-		default:
-			break;
+		switch (actions[i])
+		{
+			case ACTION_TURN_LEFT:
+				do_turn(actions[i], player);
+				break;
+			case ACTION_TURN_RIGHT:
+				do_turn(actions[i], player);
+				break;
+			case ACTION_MOVE_FORWARD:
+				do_move(actions[i], player, map);
+				break;
+			case ACTION_MOVE_BACKWARD:
+				do_move(actions[i], player, map);
+				break;
+			case ACTION_MOVE_LEFT:
+				do_move(actions[i], player, map);
+				break;
+			case ACTION_MOVE_RIGHT:
+				do_move(actions[i], player, map);
+				break;
+			default:
+				break;
+		}
+		i++;
 	}
 }
 
@@ -37,7 +49,7 @@ void do_action(int action, MazePlayer *player, int map[][MAP_WIDTH])
  */
 void do_turn(int action, MazePlayer *player)
 {
-	if (action == ACTION_LEFT)
+	if (action == ACTION_TURN_LEFT)
 		player->view_angle++;
 	else
 		player->view_angle--;
@@ -62,15 +74,24 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 	int new_x, new_y;
 	int A_x_grid = 0, A_y_grid = 0; /* Grid coordinates */
 
-	if (action == ACTION_FORWARD)
+	if (action == ACTION_MOVE_FORWARD || action == ACTION_MOVE_RIGHT)
 		angle_rad = to_radians(player->view_angle);
 	else
 		angle_rad = to_radians(player->view_angle + 180);
+		
 
 	/* printf("deg: %f, rad: %f\n", player->view_angle, angle_rad); */
 
-	new_x = roundf(player->pos.x + ((float) MOVE_STEP * cosf(angle_rad)));
-	new_y = roundf(player->pos.y - ((float) MOVE_STEP * sinf(angle_rad)));
+	if (action == ACTION_MOVE_FORWARD || action == ACTION_MOVE_BACKWARD)
+	{
+		new_x = roundf(player->pos.x + ((float) MOVE_STEP * cosf(angle_rad)));
+		new_y = roundf(player->pos.y - ((float) MOVE_STEP * sinf(angle_rad)));
+	}
+	else
+	{
+		new_x = roundf(player->pos.x + ((float) MOVE_STEP * sinf(angle_rad)));
+		new_y = roundf(player->pos.y + ((float) MOVE_STEP * cosf(angle_rad)));
+	}
 
 	A_x_grid = new_x / GRID_INTERVAL;
 	A_y_grid = new_y / GRID_INTERVAL;
@@ -81,4 +102,17 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 		player->pos.y = new_y;
 	}
 	/* printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y); */
+}
+
+/**
+ * initaliases the actions array
+ * @actions: The array of event polled actions
+ * Return: Nothing.
+ */
+void clear_actions(int actions[])
+{
+	int i;
+
+	for (i = 0; i < MAX_ACTIONS; i++)
+		actions[i] = 0;
 }

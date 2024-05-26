@@ -53,15 +53,16 @@ int main(int argc, char *argv[])
  */
 void game_loop(SDL_Instance gInstance)
 {
-	int action;
+	int actions[MAX_ACTIONS];
 
 	while (true)
 	{
-		action = poll_events();
-		if (action == ACTION_QUIT)
+		clear_actions(actions);
+		/* if (actions[0] == ACTION_QUIT) */
+		if (!(poll_events(actions)))
 			break;
 
-		do_action(action, &(gInstance.player), gInstance.map);
+		do_action(actions, &(gInstance.player), gInstance.map);
 		render_graphics(&gInstance);
 	}
 }
