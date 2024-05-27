@@ -2,11 +2,11 @@
 
 int fix_distortion(float distance, float view_angle, float ray_angle);
 float getDistToHorizonalWall(MazePlayer, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle, int *wallPos);
+	int dir_x, int dir_y, float ray_angle, int *wallPos);
 float getDistToVerticalWall(MazePlayer, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle, int *wallPos);
+	int dir_x, int dir_y, float ray_angle, int *wallPos);
 float selectDistance(float distToHorWall, float distToVertWall,
-int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer);
+	int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer);
 
 
 /**
@@ -17,7 +17,7 @@ int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer);
  * @map: The wall map array
  * Return: the distance between the ray and the wall
  */
-void getWallDistance(RenderColumn *column, MazePlayer player,
+void getWallDistance(RendColumn *column, MazePlayer player,
 int map[][MAP_WIDTH])
 {
 	float view_angle = player.view_angle;
@@ -36,6 +36,7 @@ int map[][MAP_WIDTH])
 		ray_angle -= 360;
 	else if (ray_angle < 0)
 		ray_angle += 360;
+	column->ray_angle = ray_angle;
 
 	/* Checkk ray direction on y-axis */
 	if (ray_angle > 0 && ray_angle < 180)
@@ -78,7 +79,7 @@ int map[][MAP_WIDTH])
  * Return: the selected distance
  */
 float selectDistance(float distToHorWall, float distToVertWall,
-int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer)
+int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer)
 {
 	float distance;
 	/* NOTE: potential bug - CASE: distance is correctly ZERO*/

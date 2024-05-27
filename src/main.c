@@ -32,12 +32,20 @@ int main(int argc, char *argv[])
 
 	init_player(&(gInstance.player));
 
-	init_Texture(&(gInstance.texture));
+	init_texture(&(gInstance.wall_texture));
+	init_texture(&(gInstance.floor_texture));
 
-	if (!loadTextureFromFile(&gInstance, "images/wall_texture_02.png"))
-		fprintf(stderr, "Failed to load texture from file.\n");
-
-	/* TODO: load media */
+	/* Load media */
+	if (!loadTexture(gInstance.renderer, &(gInstance.wall_texture),
+		"images/wall_texture_02.png"))
+	{
+		fprintf(stderr, "Failed to load wall texture from file.\n");
+	}
+	if (!loadTexture(gInstance.renderer, &(gInstance.floor_texture),
+		"images/floor_texture_02.png"))
+	{
+		fprintf(stderr, "Failed to load floor texture from file.\n");
+	}
 
 	game_loop(gInstance);
 

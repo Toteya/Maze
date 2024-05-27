@@ -18,7 +18,7 @@
 #define MOVE_STEP 1
 #define PLAYER_START_POS_X 256
 #define PLAYER_START_POS_Y 3584
-#define PLAYER_START_VIEW_ANGLE 90
+#define PLAYER_START_VIEW_ANGLE 70
 #define MAX_ACTIONS 10 /* Maximum number of simultaneous actions to be polled*/
 
 #define Y_DIRECTION_UP -1
@@ -101,17 +101,17 @@ typedef struct MazePlayer
 } MazePlayer;
 
 /**
- * struct WTexture - A Texture
+ * struct M_Texture - A texture struct
  * @mTexture: The SDL Texture
  * @width: The texture's width
  * @height: The texture's height
  */
-typedef struct WTexture
+typedef struct M_Texture
 {
 	SDL_Texture *mTexture;
 	int width;
 	int height;
-} WTexture;
+} M_Texture;
 
 /**
  * struct SDL_Instance - an SDL instance / game instance
@@ -119,7 +119,7 @@ typedef struct WTexture
  * @renderer: the game renderer (SDL_Renderer)
  * @player: The game player
  * @map: The array storing the coordinates of the walls of the map
- * @texture: A texture
+ * @wall_texture: A wall_texture
  *
  * Description: A struct representing the SDL (game) instance
  */
@@ -128,24 +128,30 @@ typedef struct SDL_Instance
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	MazePlayer player;
-	WTexture texture;
+	M_Texture wall_texture;
+	M_Texture floor_texture;
+	M_Texture ceiling_texture;
 	int map[MAP_HEIGHT][MAP_WIDTH];
 } SDL_Instance;
 
 /**
  * struct MazeRender_Column - a column (wall slice) to be rendered on screen
  * @index: the column number / position on the screen
+ * @ray_angle: the ray angle of the column
  * @distance: the distance from the column to the player
  * @direction: the direction of the column is facing
- * @wall_pos: the column's position on a wall block
+ * @wall_pos: Position on the wall block (from 0 to GRID interval length)
+ * @wb_row: wall base point (row)
  */
 typedef struct MazeRender_Column
 {
 	int index;
+	int ray_angle;
 	int distance;
 	int direction;
-	int wall_pos; /* Position on the wall from 0 to GRID interval length */
-} RenderColumn;
+	int wall_pos; 
+	int wb_row;
+} RendColumn;
 
 bool init_instance(SDL_Instance *);
 bool poll_events(int actions[]);
@@ -158,11 +164,12 @@ void do_turn(int action, MazePlayer *);
 void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
-void getWallDistance(RenderColumn *, MazePlayer, int map[][MAP_WIDTH]);
-void init_Texture(WTexture *texture);
+void getWallDistance(RendColumn *, MazePlayer, int map[][MAP_WIDTH]);
+void init_texture(M_Texture *texture);
 void renderWallTexture(SDL_Instance *gInstance, int x, int y, int height,
-RenderColumn column);
-bool loadTextureFromFile(SDL_Instance *gInstance, char *filepath);
+RendColumn column);
+bool loadTexture(SDL_Renderer *gRenderer, M_Texture *texture,
+char *filepath);
 void clear_actions(int actions[]);
 
 #endif /* MAZE_H */

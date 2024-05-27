@@ -1,6 +1,6 @@
 #include "../inc/maze.h"
 
-void drawWallSlice(RenderColumn, int, SDL_Instance *);
+void drawWallSlice(RendColumn *, int, SDL_Instance *);
 void set_wall_color(int direction, SDL_Colour *wall_color);
 
 /**
@@ -12,7 +12,7 @@ void render_graphics(SDL_Instance *gInstance)
 {
 	int i;
 	int pp_distance; /* Distance between player and project plane */
-	RenderColumn column;
+	RendColumn column;
 	SDL_Renderer *gRenderer = gInstance->renderer;
 	MazePlayer player = gInstance->player;
 
@@ -28,8 +28,10 @@ void render_graphics(SDL_Instance *gInstance)
 		column.index = i;
 		getWallDistance(&column, player, gInstance->map);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
+		drawWallSlice(&column, pp_distance, gInstance);
 
-		drawWallSlice(column, pp_distance, gInstance);
+		drawFloorSlice(column, player, pp_distance);
+		
 	}
 
 	SDL_RenderPresent(gRenderer);
@@ -44,7 +46,7 @@ void render_graphics(SDL_Instance *gInstance)
  * @gInstance: The maze game SDL instance
  * Return: Nothing
  */
-void drawWallSlice(RenderColumn column, int pp_dist, SDL_Instance *gInstance)
+void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
 {
 	int wall_height = GRID_INTERVAL; /* Actual wall height*/
 	int wp_height; /* Wall projection height */
@@ -52,23 +54,23 @@ void drawWallSlice(RenderColumn column, int pp_dist, SDL_Instance *gInstance)
 	SDL_Color wall_color;
 	SDL_Renderer *gRenderer = gInstance->renderer;
 
-	wp_height = wall_height * ((float) pp_dist / column.distance);
+	wp_height = wall_height * ((float) pp_dist / column->distance);
 	/**
 	* printf("col: %d, Dw: %d, Dp: %d, Hw: %d, Hp: %d\n",
 	* column, wall_distance, pp_distance, wall_height, proj_height);
 	*/
-
 	y_start = (WINDOW_HEIGHT / 2) - (wp_height / 2);
 	y_end = y_start + wp_height;
+	column->wb_row = y_end;
 
-	if (gInstance->texture.mTexture != NULL)
-		renderWallTexture(gInstance, column.index, y_start, wp_height, column);
+	if (gInstance->wall_texture.mTexture != NULL)
+		renderWallTexture(gInstance, column->index, y_start, wp_height, *column);
 	else
 	{
-		set_wall_color(column.direction, &wall_color);
+		set_wall_color(column->direction, &wall_color);
 		SDL_SetRenderDrawColor(gRenderer, wall_color.r, wall_color.g, wall_color.g,
 		0xFF);
-		SDL_RenderDrawLine(gRenderer, column.index, y_start, column.index,
+		SDL_RenderDrawLine(gRenderer, column->index, y_start, column->index,
 		y_end);
 	}
 }
