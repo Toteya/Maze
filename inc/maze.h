@@ -167,9 +167,11 @@ float to_radians(float angle_deg);
 void getWallDistance(RendColumn *, MazePlayer, int map[][MAP_WIDTH]);
 void init_texture(M_Texture *texture);
 void renderWallTexture(SDL_Instance *gInstance, int x, int y, int height,
-RendColumn column);
+	RendColumn column);
 bool loadTexture(SDL_Renderer *gRenderer, M_Texture *texture,
-char *filepath);
+	char *filepath);
 void clear_actions(int actions[]);
+void drawFloorSlice(SDL_Instance *gInstance, RendColumn column,
+	MazePlayer player, int pp_distance);
 
 #endif /* MAZE_H */

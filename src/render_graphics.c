@@ -30,7 +30,8 @@ void render_graphics(SDL_Instance *gInstance)
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 		drawWallSlice(&column, pp_distance, gInstance);
 
-		drawFloorSlice(column, player, pp_distance);
+		if (gInstance->floor_texture.mTexture != NULL)
+			drawFloorSlice(gInstance, column, player, pp_distance);
 		
 	}
 

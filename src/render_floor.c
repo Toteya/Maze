@@ -1,8 +1,11 @@
 #include "../inc/maze.h"
 
+int getFloorDistance(int fp_row, int pp_distance, float beta);
+void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y);
 
 /**
  * drawFloorSlice - Draws the floor for the given column of the window
+ * @gInstance: The maze game SDL instance
  * @column: The column to be rendered
  * @player: The player
  * @pp_distance: The distance between the player and the projection plane
@@ -26,7 +29,8 @@ void drawFloorSlice(SDL_Instance *gInstance, RendColumn column, MazePlayer playe
 		distance = getFloorDistance(fp_row, pp_distance, beta);
 		F_x = roundf(player.pos.x + distance * cosf(column.ray_angle));
 		F_y = roundf(player.pos.y - distance * sinf(column.ray_angle));
-		renderFloorTexture(gInstance, column.index, fp_row, F_x, F_y);
+		renderFloorPixel(gInstance, column.index, fp_row, F_x, F_y);
+		fp_row++;
 	}
 	
 }
@@ -45,7 +49,6 @@ int getFloorDistance(int fp_row, int pp_distance, float beta)
 	int s_distance; /* straight distance from player to the floor point */
 	int distance; /* True distance from player to the floor point */
 	int p_height; /* Player height */
-	float beta; /* Angle between viewing angle and the ray angle */
 
 	p_height = WINDOW_HEIGHT / 2;
 	r = fp_row - p_height;
@@ -60,16 +63,16 @@ int getFloorDistance(int fp_row, int pp_distance, float beta)
 /**
  * renderFloorPixel - Renders a pixel of the floor texture based on the
  * given floor position
- * gInstance: The maze game SDL instance
+ * @gInstance: The maze game SDL instance
  * @x: The x position on the screen to render
  * @y: The y position on the screen to render
  * @f_x: The x- coordinate of the floor point
  * @f_y: The y- coordinate of the floor point
  */
- void renderFloorPixel(SDL_Instance gInstance, int x, int y, int f_x, int f_y)
+ void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y)
  {
-	SDL_Renderer *gRenderer = gInstance.renderer;
-	M_Texture *fTexture = &(gInstance.floor_texture);
+	SDL_Renderer *gRenderer = gInstance->renderer;
+	M_Texture *fTexture = &(gInstance->floor_texture);
 
 	SDL_Rect renderPX; /* Destination pixel on screen */
 	SDL_Rect clipPX; /* The source texture pixel */
