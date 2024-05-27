@@ -14,10 +14,11 @@
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 30
 #define PI 3.14159265359f
+
 #define MOVE_STEP 1
-#define PLAYER_START_POS_X 384
+#define PLAYER_START_POS_X 256
 #define PLAYER_START_POS_Y 3584
-#define PLAYER_START_VIEW_ANGLE 45
+#define PLAYER_START_VIEW_ANGLE 90
 #define MAX_ACTIONS 10 /* Maximum number of simultaneous actions to be polled*/
 
 #define Y_DIRECTION_UP -1
@@ -59,18 +60,18 @@ enum Action_Code
 
 /**
  * enum Wall_Direction - The direction that a wall is facing
- * @MAZE_NORTH: North
- * @MAZE_EAST: East
- * @MAZE_SOUTH: South
- * @MAZE_WEST: West
+ * @NORTH: North
+ * @EAST: East
+ * @SOUTH: South
+ * @WEST: West
  * Description: Provides a unique code representing the direction of the wall
  */
 enum Wall_Direction
 {
-	MAZE_NORTH = 1,
-	MAZE_EAST,
-	MAZE_SOUTH,
-	MAZE_WEST
+	NORTH = 1,
+	EAST,
+	SOUTH,
+	WEST
 };
 
 
@@ -159,8 +160,8 @@ void init_player(MazePlayer *);
 float to_radians(float angle_deg);
 void getWallDistance(RenderColumn *, MazePlayer, int map[][MAP_WIDTH]);
 void init_Texture(WTexture *texture);
-void renderTexture(SDL_Instance *gInstance, int x, int y, int height,
-int wall_pos);
+void renderWallTexture(SDL_Instance *gInstance, int x, int y, int height,
+RenderColumn column);
 bool loadTextureFromFile(SDL_Instance *gInstance, char *filepath);
 void clear_actions(int actions[]);
 

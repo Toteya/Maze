@@ -62,7 +62,7 @@ void drawWallSlice(RenderColumn column, int pp_dist, SDL_Instance *gInstance)
 	y_end = y_start + wp_height;
 
 	if (gInstance->texture.mTexture != NULL)
-		renderTexture(gInstance, column.index, y_start, wp_height, column.wall_pos);
+		renderWallTexture(gInstance, column.index, y_start, wp_height, column);
 	else
 	{
 		set_wall_color(column.direction, &wall_color);
@@ -89,25 +89,25 @@ void set_wall_color(int direction, SDL_Colour *wall_color)
 	 */
 	switch (direction)
 	{
-		case MAZE_NORTH:
+		case NORTH:
 			wall_color->r = 0x8A;
 			wall_color->g = 0x87;
 			wall_color->b = 0x84;
 			wall_color->a = 0xFF;
 			break;
-		case MAZE_SOUTH:
+		case SOUTH:
 			wall_color->r = 0x8A;
 			wall_color->g = 0x87;
 			wall_color->b = 0x84;
 			wall_color->a = 0xFF;
 			break;
-		case MAZE_EAST:
+		case EAST:
 			wall_color->r = 0x79;
 			wall_color->g = 0x76;
 			wall_color->b = 0x73;
 			wall_color->a = 0xFF;
 			break;
-		case MAZE_WEST:
+		case WEST:
 			wall_color->r = 0x79;
 			wall_color->g = 0x76;
 			wall_color->b = 0x73;

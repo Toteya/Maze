@@ -1,5 +1,7 @@
 #include "../inc/maze.h"
 
+void shadeTexture(WTexture *texture, int direction);
+
 /**
  * init_Texture - Initialises a texture struct
  * @texture: The texture struct to be initialised
@@ -70,15 +72,16 @@ bool loadTextureFromFile(SDL_Instance *gInstance, char *filepath)
 }
 
 /**
- * renderTexture - Renders a wall texture onto the screen
+ * renderWallTexture - Renders a wall texture onto the screen
  * @gInstance: The maze game SDL instance
  * @x: The x position on the screen to render
  * @y: The y position on the screen to render
  * @wp_height: The projected wall height
+ * @column: The column to be rendered
  * @wallPos: The ray's position on the wall block
  */
-void renderTexture(SDL_Instance *gInstance, int x, int y, int wp_height,
-int wallPos)
+void renderWallTexture(SDL_Instance *gInstance, int x, int y, int wp_height,
+RenderColumn column)
 {
 	SDL_Renderer *gRenderer = gInstance->renderer;
 	WTexture *gTexture = &(gInstance->texture);
@@ -86,6 +89,8 @@ int wallPos)
 	SDL_Rect renderRect; /* Destination rectangle on screen to render*/
 	SDL_Rect slice; /* The source texture slice/clip */
 	int texturePos;
+	int wallPos = column.wall_pos;
+	int direction = column.direction;
 
 	texturePos = gTexture->width * ((float)wallPos / GRID_INTERVAL);
 	slice.x = texturePos;
@@ -98,5 +103,30 @@ int wallPos)
 	renderRect.w = slice.w;
 	renderRect.h = wp_height;
 
+	shadeTexture(gTexture, direction);
 	SDL_RenderCopy(gRenderer, gTexture->mTexture, &slice, &renderRect);
+}
+
+/**
+ * shadeTexture - Applies shading to a wall Texture, depending on the direction
+ * it is facing
+ * @texture: The texture to be shaded.
+ * @direction: The direction the wall is facing.
+ * Return: Nothing
+ */
+void shadeTexture(WTexture *texture, int direction)
+{
+	float shading_factor = 1;
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+
+	if (direction == EAST || direction == WEST)
+		shading_factor = 0.75;
+
+	r = 0xFF * shading_factor;
+	g = 0xFF * shading_factor;
+	b = 0xFF * shading_factor;
+
+	SDL_SetTextureColorMod(texture->mTexture, r, g, b);
 }

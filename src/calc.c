@@ -87,27 +87,27 @@ int dir_x, int dir_y, RenderColumn *column, int wallPosHor, int wallPosVer)
 		distance = fabs(distToHorWall);
 		column->wall_pos = wallPosHor;
 		if (dir_y == Y_DIRECTION_UP)
-			column->direction = MAZE_SOUTH;
+			column->direction = SOUTH;
 		else
-			column->direction = MAZE_NORTH;
+			column->direction = NORTH;
 	}
 	else
 	{
 		distance = fabs(distToVertWall);
 		column->wall_pos = wallPosVer;
 		if (dir_x == X_DIRECTION_LEFT)
-			column->direction = MAZE_EAST;
+			column->direction = EAST;
 		else
-			column->direction = MAZE_WEST;
+			column->direction = WEST;
 	}
 	if (distToVertWall && fabs(distToVertWall) < fabs(distToHorWall))
 	{
 		distance = fabs(distToVertWall);
 		column->wall_pos = wallPosVer;
 		if (dir_x == X_DIRECTION_LEFT)
-			column->direction = MAZE_EAST;
+			column->direction = EAST;
 		else
-			column->direction = MAZE_WEST;
+			column->direction = WEST;
 	}
 
 	return (distance);
