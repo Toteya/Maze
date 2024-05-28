@@ -19,7 +19,8 @@ void render_graphics(SDL_Instance *gInstance)
 	pp_distance = (WINDOW_WIDTH / 2) / (tanf(to_radians(FIELD_OF_VIEW / 2)));
 
 	/* Clear screen */
-	SDL_SetRenderDrawColor(gRenderer, 0xEF, 0xB9, 0x6E, 0xFF);
+	/* SDL_SetRenderDrawColor(gRenderer, 0xEF, 0xB9, 0x6E, 0xFF); */
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xAE, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
 
 	/* Render walls */
@@ -49,7 +50,7 @@ void render_graphics(SDL_Instance *gInstance)
  */
 void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
 {
-	int wall_height = GRID_INTERVAL; /* Actual wall height*/
+	int wall_height = WALL_HEIGHT; /* Actual wall height*/
 	int wp_height; /* Wall projection height */
 	int y_start, y_end;
 	SDL_Color wall_color;
