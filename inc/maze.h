@@ -16,7 +16,8 @@
 #define MAP_HEIGHT 30
 #define PI 3.14159265359f
 
-#define MOVE_STEP 1
+#define MOVE_STEP 5
+#define ROTATION_STEP 1 /* Degrees */
 #define PLAYER_START_POS_X 256
 #define PLAYER_START_POS_Y 3584
 #define PLAYER_START_VIEW_ANGLE 70
@@ -28,6 +29,25 @@
 #define X_DIRECTION_LEFT -1
 #define X_DIRECTION_RIGHT 1
 #define X_DIRECTION_NONE 0
+
+/**
+ * enum Wall_Type - The type of wall
+ * @DEFAULT_WALL: Normal maze wall
+ * @START_1: Starting line wall (left half)
+ * @START_2: Starting line wall (right half)
+ * @FINISH_1: Finish line wall (left half)
+ * @FINISH_2: Finish line wall (right half)
+ * @TOTAL_WALL_TYPES: Total number of wall types
+ */
+enum Wall_Type
+{
+	DEFAULT_WALL,
+	START_1,
+	START_2,
+	FINISH_1,
+	FINISH_2,
+	TOTAL_WALL_TYPES
+};
 
 /**
  * enum Action_Code - action codes corresponding to an event
@@ -129,14 +149,14 @@ typedef struct SDL_Instance
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	MazePlayer player;
-	M_Texture wall_texture;
+	M_Texture wall_texture[TOTAL_WALL_TYPES];
 	M_Texture floor_texture;
 	M_Texture ceiling_texture;
 	int map[MAP_HEIGHT][MAP_WIDTH];
 } SDL_Instance;
 
 /**
- * struct MazeRender_Column - a column (wall slice) to be rendered on screen
+ * struct RendColumn - a column (wall slice) to be rendered on screen
  * @index: the column number / position on the screen
  * @ray_angle: the ray angle of the column
  * @distance: the distance from the column to the player
@@ -144,7 +164,7 @@ typedef struct SDL_Instance
  * @wall_pos: Position on the wall block (from 0 to GRID interval length)
  * @wb_row: wall base point (row)
  */
-typedef struct MazeRender_Column
+typedef struct RendColumn
 {
 	int index;
 	int ray_angle;
@@ -152,6 +172,7 @@ typedef struct MazeRender_Column
 	int direction;
 	int wall_pos; 
 	int wb_row;
+	int type;
 } RendColumn;
 
 bool init_instance(SDL_Instance *);

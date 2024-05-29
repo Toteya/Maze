@@ -15,7 +15,7 @@ void renderWallTexture(SDL_Instance *gInstance, int x, int y, int wp_height,
 RendColumn column)
 {
 	SDL_Renderer *gRenderer = gInstance->renderer;
-	M_Texture *gTexture = &(gInstance->wall_texture);
+	M_Texture *gTexture = &(gInstance->wall_texture[column.type]);
 
 	SDL_Rect renderRect; /* Destination rectangle on screen to render*/
 	SDL_Rect slice; /* The source texture slice/clip */
@@ -23,7 +23,13 @@ RendColumn column)
 	int wallPos = column.wall_pos;
 	int direction = column.direction;
 
-	texturePos = gTexture->width * ((float)wallPos / GRID_INTERVAL);
+	/**
+	 * This calculation is buggy. Needs fixing.
+	 * re-check entire calcultion for wall position.
+	 * Temporary fix: use ABS value
+	 */
+	texturePos = fabs(gTexture->width * ((float)wallPos / GRID_INTERVAL) - 1);
+	
 	slice.x = texturePos;
 	slice.y = 0;
 	slice.w = 1;

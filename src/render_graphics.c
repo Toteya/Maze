@@ -33,7 +33,6 @@ void render_graphics(SDL_Instance *gInstance)
 
 		if (gInstance->floor_texture.mTexture != NULL)
 			drawFloorSlice(gInstance, column, player, pp_distance);
-		
 	}
 
 	SDL_RenderPresent(gRenderer);
@@ -53,6 +52,7 @@ void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
 	int wall_height = WALL_HEIGHT; /* Actual wall height*/
 	int wp_height; /* Wall projection height */
 	int y_start, y_end;
+	int type = column->type;
 	SDL_Color wall_color;
 	SDL_Renderer *gRenderer = gInstance->renderer;
 
@@ -65,8 +65,10 @@ void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
 	y_end = y_start + wp_height;
 	column->wb_row = y_end;
 
-	if (gInstance->wall_texture.mTexture != NULL)
+	if (gInstance->wall_texture[type].mTexture != NULL)
+	{
 		renderWallTexture(gInstance, column->index, y_start, wp_height, *column);
+	}
 	else
 	{
 		set_wall_color(column->direction, &wall_color);

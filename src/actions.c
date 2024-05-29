@@ -50,9 +50,9 @@ void do_action(int actions[], MazePlayer *player, int map[][MAP_WIDTH])
 void do_turn(int action, MazePlayer *player)
 {
 	if (action == ACTION_TURN_LEFT)
-		player->view_angle++;
+		player->view_angle += ROTATION_STEP;
 	else
-		player->view_angle--;
+		player->view_angle -= ROTATION_STEP;
 
 	if (player->view_angle > 360)
 		player->view_angle -= 360;

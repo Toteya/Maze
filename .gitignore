@@ -5,3 +5,4 @@ Makefile
 src/maze
 a.out
 *.csv
+*Zone.Identifier

@@ -3,6 +3,7 @@
 
 
 void game_loop(SDL_Instance gInstance);
+void init_wallTextureFilepaths(char *files[]);
 
 /**
  * main - Entry point to the Maze game
@@ -15,6 +16,9 @@ int main(int argc, char *argv[])
 {
 	SDL_Instance gInstance;
 	char *map_filename = "maze_map.csv";
+	char *floor_texture_filepath = "images/floor_02.png";
+	char *wall_texture_filepath[TOTAL_WALL_TYPES];
+	int i;
 
 	/* Initialise game instance */
 	if (init_instance(&gInstance) == false)
@@ -32,20 +36,23 @@ int main(int argc, char *argv[])
 
 	init_player(&(gInstance.player));
 
-	init_texture(&(gInstance.wall_texture));
+	/* Initialise and load wall textures */
+	init_wallTextureFilepaths(wall_texture_filepath);
+	for (i = 0; i < TOTAL_WALL_TYPES; i++)
+	{
+		init_texture(&(gInstance.wall_texture[i]));
+
+		if (!loadTexture(gInstance.renderer, &(gInstance.wall_texture[i]),
+			wall_texture_filepath[i]))
+			fprintf(stderr, "Failed to load wall texture from file.\n");
+	}
+
+	/* Initialise and load floor texture */
 	init_texture(&(gInstance.floor_texture));
 
-	/* Load media */
-	if (!loadTexture(gInstance.renderer, &(gInstance.wall_texture),
-		"images/wall_texture_02.png"))
-	{
-		fprintf(stderr, "Failed to load wall texture from file.\n");
-	}
 	if (!loadTexture(gInstance.renderer, &(gInstance.floor_texture),
-		"images/floor_texture_02.png"))
-	{
+		floor_texture_filepath))
 		fprintf(stderr, "Failed to load floor texture from file.\n");
-	}
 
 	game_loop(gInstance);
 
@@ -72,5 +79,40 @@ void game_loop(SDL_Instance gInstance)
 
 		do_action(actions, &(gInstance.player), gInstance.map);
 		render_graphics(&gInstance);
+	}
+}
+
+/**
+ * init_wallTextureFilepaths - Initialises an array of filepaths containing
+ * wall textures
+ * @files: An array of filepaths
+ */
+void init_wallTextureFilepaths(char *files[])
+{
+	int i;
+
+	for (i = 0; i < TOTAL_WALL_TYPES; i++)
+	{
+		switch (i)
+		{
+		case DEFAULT_WALL:
+			files[i] = "images/wall_default.png";
+			break;
+		case START_1:
+			files[i] = "images/wall_start_01.png";
+			break;
+		case START_2:
+			files[i] = "images/wall_start_02.png";
+			break;
+		case FINISH_1:
+			files[i] = "images/wall_finish_01.png";
+			break;
+		case FINISH_2:
+			files[i] = "images/wall_finish_02.png";
+			break;
+		
+		default:
+			break;
+		}
 	}
 }

@@ -55,7 +55,7 @@ bool check_for_wall(int x, int y, int map[][MAP_WIDTH])
 
 	if (map[y][x])
 	{
-		/* printf("wall: [%d, %d]\n", x, y); */
+		/* printf("wall: [%d, %d] = %d\n", x, y, map[y][x]); */
 		return (true);
 	}
 

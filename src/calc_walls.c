@@ -2,11 +2,12 @@
 
 int fix_distortion(float distance, float view_angle, float ray_angle);
 float getDistToHorizonalWall(MazePlayer, int map[][MAP_WIDTH],
-	int dir_x, int dir_y, float ray_angle, int *wallPos);
+	int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType);
 float getDistToVerticalWall(MazePlayer, int map[][MAP_WIDTH],
-	int dir_x, int dir_y, float ray_angle, int *wallPos);
+	int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType);
 float selectDistance(float distToHorWall, float distToVertWall,
-	int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer);
+	int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer,
+	int wallTypeHor, int wallTypeVer);
 
 
 /**
@@ -25,6 +26,8 @@ int map[][MAP_WIDTH])
 	float ray_angle;
 	float distToVertWall = 0; /* distance to vertical wall intersect */
 	float distToHorWall = 0; /* distance to horizontal wall intersect */
+	int wallTypeHor = DEFAULT_WALL;
+	int wallTypeVer = DEFAULT_WALL;
 	int wallPosHor = 0;
 	int wallPosVer = 0;
 	float distance; /* Distance from player viewpoint to wall*/
@@ -37,6 +40,7 @@ int map[][MAP_WIDTH])
 	else if (ray_angle < 0)
 		ray_angle += 360;
 	column->ray_angle = ray_angle;
+	/* column->type = DEFAULT_WALL; */
 
 	/* Checkk ray direction on y-axis */
 	if (ray_angle > 0 && ray_angle < 180)
@@ -53,14 +57,15 @@ int map[][MAP_WIDTH])
 		dir_x = X_DIRECTION_RIGHT;
 	else
 		dir_x = X_DIRECTION_NONE; /* The ray is purely vertical */
-
+	
+	
 	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y,
-	ray_angle, &wallPosHor);
+	ray_angle, &wallPosHor, &wallTypeHor);
 	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y,
-	ray_angle, &wallPosVer);
+	ray_angle, &wallPosVer, &wallTypeVer);
 
 	distance = selectDistance(distToHorWall, distToVertWall, dir_x, dir_y,
-	column, wallPosHor, wallPosVer);
+	column, wallPosHor, wallPosVer, wallTypeHor, wallTypeVer);
 
 	column->distance = fix_distortion(distance, view_angle, ray_angle);
 }
@@ -79,7 +84,8 @@ int map[][MAP_WIDTH])
  * Return: the selected distance
  */
 float selectDistance(float distToHorWall, float distToVertWall,
-int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer)
+	int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer,
+	int wallTypeHor, int wallTypeVer)
 {
 	float distance;
 	/* NOTE: potential bug - CASE: distance is correctly ZERO*/
@@ -87,24 +93,33 @@ int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer)
 	{
 		distance = fabs(distToHorWall);
 		column->wall_pos = wallPosHor;
-		if (dir_y == Y_DIRECTION_UP)
-			column->direction = SOUTH;
-		else
+		column->type = wallTypeHor;
+		if (dir_y == Y_DIRECTION_DOWN)
 			column->direction = NORTH;
+		else
+		{
+			column->direction = SOUTH;
+			column->wall_pos = GRID_INTERVAL - column->wall_pos + 1;
+		}
 	}
 	else
 	{
 		distance = fabs(distToVertWall);
 		column->wall_pos = wallPosVer;
+		column->type = wallTypeVer;
 		if (dir_x == X_DIRECTION_LEFT)
 			column->direction = EAST;
 		else
+		{
 			column->direction = WEST;
+			column->wall_pos = GRID_INTERVAL - column->wall_pos + 1;
+		}
 	}
 	if (distToVertWall && fabs(distToVertWall) < fabs(distToHorWall))
 	{
 		distance = fabs(distToVertWall);
 		column->wall_pos = wallPosVer;
+		column->type = wallTypeVer;
 		if (dir_x == X_DIRECTION_LEFT)
 			column->direction = EAST;
 		else
@@ -127,7 +142,7 @@ int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer)
  * Return: Distance to wall
  */
 float getDistToHorizonalWall(MazePlayer player, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle, int *wallPos)
+int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 {
 	float distanceToHorWall = 0;
 	float A_x, A_y; /* x- and y- distances to grid intersection */
@@ -167,15 +182,13 @@ int dir_x, int dir_y, float ray_angle, int *wallPos)
 
 	if (wall_found)
 	{
+		*wallType = map[A_y_grid][A_x_grid] - 1;
 		if (dir_x)
 			distanceToHorWall =  (player.pos.x - A_x) / cosf(to_radians(ray_angle));
 		else
 			distanceToHorWall = A_y - player.pos.y;
 
-		if (dir_x > 0)
-			*wallPos = A_x - ((int)A_x / GRID_INTERVAL) * GRID_INTERVAL;
-		else
-			*wallPos = GRID_INTERVAL - (A_x - ((int)A_x / GRID_INTERVAL * GRID_INTERVAL));
+		*wallPos = GRID_INTERVAL - (int)A_x % GRID_INTERVAL;
 	}
 
 	return (distanceToHorWall);
@@ -194,7 +207,7 @@ int dir_x, int dir_y, float ray_angle, int *wallPos)
  * Return: Distance to wall
  */
 float getDistToVerticalWall(MazePlayer player, int map[][MAP_WIDTH],
-int dir_x, int dir_y, float ray_angle, int *wallPos)
+int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 {
 	float distanceToVertWall = 0;
 	float A_x, A_y; /* x and y distances to grid intersection */
@@ -234,11 +247,16 @@ int dir_x, int dir_y, float ray_angle, int *wallPos)
 
 	if (wall_found)
 	{
+		*wallType = map[A_y_grid][A_x_grid] - 1;
 		distanceToVertWall = (player.pos.x - A_x) / cosf(to_radians(ray_angle));
-		if (dir_y > 0)
+		
+		*wallPos = GRID_INTERVAL - (int)A_y % GRID_INTERVAL;
+		/* printf("A_y: %f, wallPos: %d\n", A_y, *wallPos); */
+		/*if (dir_y > 0)
 			*wallPos = A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL);
 		else
 			*wallPos = GRID_INTERVAL - (A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL));
+		*/
 	}
 	return (distanceToVertWall);
 }
