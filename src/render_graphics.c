@@ -23,10 +23,13 @@ void render_graphics(SDL_Instance *gInstance)
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0xAE, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
 
-	/* Render walls */
+	paintFloor(gRenderer); /* Default floor color */
+
+	/* Render walls and floor */
 	for (i = 0; i <= WINDOW_WIDTH; i++)
 	{
 		column.index = i;
+
 		getWallDistance(&column, player, gInstance->map);
 		/*printf("col: %d, wall distance: %d\n", i, wall_distance);*/
 		drawWallSlice(&column, pp_distance, gInstance);
@@ -81,7 +84,7 @@ void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
 
 /**
  * set_wall_color - Sets the wall shade based on the direction the wall
- * is facing
+ * is facing (if no wall texture is rendered)
  * @direction: The direction that the wall is facing
  * @wall_color: The wall color to be updated
  * Return: Nothing

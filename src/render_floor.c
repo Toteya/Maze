@@ -103,3 +103,21 @@ void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y)
 
 	SDL_RenderCopy(gRenderer, fTexture->mTexture, &clipPX, &renderPX);
 }
+
+/**
+ * paint_floor - Renders the default floor color. This color will be visible
+ * if no texture is rendered
+ * @gRenderer: The SDL_Renderer
+ */
+void paintFloor(SDL_Renderer *gRenderer)
+{
+	SDL_Rect floor = {
+		0,
+		WINDOW_HEIGHT / 2,
+		WINDOW_WIDTH,
+		WINDOW_HEIGHT / 2
+	};
+
+	SDL_SetRenderDrawColor(gRenderer, 0xEF, 0xB9, 0x6E, 0xFF);
+	SDL_RenderFillRect(gRenderer, &floor);
+}

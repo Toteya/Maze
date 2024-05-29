@@ -198,5 +198,6 @@ bool loadTexture(SDL_Renderer *gRenderer, M_Texture *texture,
 void clear_actions(int actions[]);
 void drawFloorSlice(SDL_Instance *gInstance, RendColumn column,
 	MazePlayer player, int pp_distance);
+void paintFloor(SDL_Renderer *gRenderer);
 
 #endif /* MAZE_H */

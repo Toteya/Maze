@@ -10,6 +10,7 @@ bool poll_events(int actions[])
 {
 	int i = 0;
 	SDL_Event event;
+
 	const Uint8 *currentKeyStates;
 
 	while (SDL_PollEvent(&event))
@@ -36,7 +37,6 @@ bool poll_events(int actions[])
 		actions[i++] = ACTION_TURN_LEFT;
 	if (currentKeyStates[SDL_SCANCODE_D])
 		actions[i++] = ACTION_TURN_RIGHT;
-
 
 	return (true);
 }

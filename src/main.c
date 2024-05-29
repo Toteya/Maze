@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
 	SDL_Instance gInstance;
 	char *map_filename = "maze_map.csv";
-	char *floor_texture_filepath = "images/floor_02.png";
+	char *floor_texture_filepath = "images/floor_02.png$$";
 	char *wall_texture_filepath[TOTAL_WALL_TYPES];
 	int i;
 
