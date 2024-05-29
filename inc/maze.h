@@ -31,7 +31,7 @@
 #define X_DIRECTION_NONE 0
 
 /**
- * enum Wall_Type - The type of wall
+ * enum Wall_Type - The wall type (used to select the appropriate wall texture)
  * @DEFAULT_WALL: Normal maze wall
  * @START_1: Starting line wall (left half)
  * @START_2: Starting line wall (right half)
@@ -140,8 +140,9 @@ typedef struct M_Texture
  * @renderer: the game renderer (SDL_Renderer)
  * @player: The game player
  * @map: The array storing the coordinates of the walls of the map
- * @wall_texture: A wall_texture
- *
+ * @wall_texture: A wall texture
+ * @floor_texture: A floor texture
+ * @ceiling_texture: A ceiling texture
  * Description: A struct representing the SDL (game) instance
  */
 typedef struct SDL_Instance
@@ -161,8 +162,9 @@ typedef struct SDL_Instance
  * @ray_angle: the ray angle of the column
  * @distance: the distance from the column to the player
  * @direction: the direction of the column is facing
- * @wall_pos: Position on the wall block (from 0 to GRID interval length)
+ * @wall_pos: position on the wall block (from 0 to GRID interval length)
  * @wb_row: wall base point (row)
+ * @type: the wall type (used to select the correct texture)
  */
 typedef struct RendColumn
 {
@@ -170,7 +172,7 @@ typedef struct RendColumn
 	int ray_angle;
 	int distance;
 	int direction;
-	int wall_pos; 
+	int wall_pos;
 	int wb_row;
 	int type;
 } RendColumn;
@@ -186,6 +188,7 @@ void do_turn(int action, MazePlayer *);
 void do_move(int action, MazePlayer *, int map[][MAP_WIDTH]);
 void init_player(MazePlayer *);
 float to_radians(float angle_deg);
+int fix_distortion(float distance, float view_angle, float ray_angle);
 void getWallDistance(RendColumn *, MazePlayer, int map[][MAP_WIDTH]);
 void init_texture(M_Texture *texture);
 void renderWallTexture(SDL_Instance *gInstance, int x, int y, int height,

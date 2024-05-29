@@ -9,7 +9,6 @@ void shadeTexture(M_Texture *texture, int direction);
  * @y: The y position on the screen to render
  * @wp_height: The projected wall height
  * @column: The column to be rendered
- * @wallPos: The ray's position on the wall block
  */
 void renderWallTexture(SDL_Instance *gInstance, int x, int y, int wp_height,
 RendColumn column)
@@ -23,13 +22,8 @@ RendColumn column)
 	int wallPos = column.wall_pos;
 	int direction = column.direction;
 
-	/**
-	 * This calculation is buggy. Needs fixing.
-	 * re-check entire calcultion for wall position.
-	 * Temporary fix: use ABS value
-	 */
-	texturePos = fabs(gTexture->width * ((float)wallPos / GRID_INTERVAL) - 1);
-	
+	texturePos = gTexture->width * ((float)wallPos / GRID_INTERVAL) - 1;
+
 	slice.x = texturePos;
 	slice.y = 0;
 	slice.w = 1;

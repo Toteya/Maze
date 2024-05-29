@@ -1,6 +1,5 @@
 #include "../inc/maze.h"
 
-int fix_distortion(float distance, float view_angle, float ray_angle);
 float getDistToHorizonalWall(MazePlayer, int map[][MAP_WIDTH],
 	int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType);
 float getDistToVerticalWall(MazePlayer, int map[][MAP_WIDTH],
@@ -8,6 +7,7 @@ float getDistToVerticalWall(MazePlayer, int map[][MAP_WIDTH],
 float selectDistance(float distToHorWall, float distToVertWall,
 	int dir_x, int dir_y, RendColumn *column, int wallPosHor, int wallPosVer,
 	int wallTypeHor, int wallTypeVer);
+void set_ray_direction(float ray_angle, int *dir_x, int *dir_y);
 
 
 /**
@@ -42,23 +42,9 @@ int map[][MAP_WIDTH])
 	column->ray_angle = ray_angle;
 	/* column->type = DEFAULT_WALL; */
 
-	/* Checkk ray direction on y-axis */
-	if (ray_angle > 0 && ray_angle < 180)
-		dir_y = Y_DIRECTION_UP;
-	else if (ray_angle < 0 || ray_angle > 180)
-		dir_y = Y_DIRECTION_DOWN;
-	else
-		dir_y = Y_DIRECTION_NONE; /* ray direction is purely horizontal */
+	set_ray_direction(ray_angle, &dir_x, &dir_y);
 
-	/* Check ray direction on x-axis */
-	if (ray_angle > 90 && ray_angle < 270)
-		dir_x = X_DIRECTION_LEFT;
-	else if (ray_angle < 90 || ray_angle > 270)
-		dir_x = X_DIRECTION_RIGHT;
-	else
-		dir_x = X_DIRECTION_NONE; /* The ray is purely vertical */
-	
-	
+
 	distToHorWall = getDistToHorizonalWall(player, map, dir_x, dir_y,
 	ray_angle, &wallPosHor, &wallTypeHor);
 	distToVertWall = getDistToVerticalWall(player, map, dir_x, dir_y,
@@ -71,6 +57,33 @@ int map[][MAP_WIDTH])
 }
 
 /**
+ * set_ray_direction - Sets the ray's direction with respect to the x and y
+ * axes
+ * @ray_angle: The ray's angle
+ * @dir_x: The x-direction of the ray (LEFT or RIGHT)
+ * @dir_y: The y-direction of the ray (UP or DOWN)
+ */
+void set_ray_direction(float ray_angle, int *dir_x, int *dir_y)
+{
+	/* Check ray direction on y-axis */
+	if (ray_angle > 0 && ray_angle < 180)
+		*dir_y = Y_DIRECTION_UP;
+	else if (ray_angle < 0 || ray_angle > 180)
+		*dir_y = Y_DIRECTION_DOWN;
+	else
+		*dir_y = Y_DIRECTION_NONE; /* ray direction is purely horizontal */
+
+	/* Check ray direction on x-axis */
+	if (ray_angle > 90 && ray_angle < 270)
+		*dir_x = X_DIRECTION_LEFT;
+	else if (ray_angle < 90 || ray_angle > 270)
+		*dir_x = X_DIRECTION_RIGHT;
+	else
+		*dir_x = X_DIRECTION_NONE; /* The ray is purely vertical */
+}
+
+
+/**
  * selectDistance - Compares the distance to a horizontal wall intersection
  * with the distance to a vertical wall intersection and selects the shorter
  * one.
@@ -81,6 +94,8 @@ int map[][MAP_WIDTH])
  * @column: The ray's column to be rendered.
  * @wallPosHor: The ray's position on the horizontal wall
  * @wallPosVer: The ray's position on the vertical wall
+ * @wallTypeHor: The horizontal wall's type
+ * @wallTypeVer: The vertical wall's type
  * Return: the selected distance
  */
 float selectDistance(float distToHorWall, float distToVertWall,
@@ -139,6 +154,7 @@ float selectDistance(float distToHorWall, float distToVertWall,
  * @dir_y: The y-direction of the ray (UP or DOWN)
  * @ray_angle: The ray's angle
  * @wallPos: The position of the ray on the wall block
+ * @wallType: The type of wall
  * Return: Distance to wall
  */
 float getDistToHorizonalWall(MazePlayer player, int map[][MAP_WIDTH],
@@ -163,10 +179,6 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 	{
 		A_y_grid = A_y / GRID_INTERVAL;
 		A_x_grid = A_x / GRID_INTERVAL;
-		/**
-		* printf("col: %d, Angle: %f - Hor: Grid [%d, %d] Pos[%f, %f]\n",
-		* column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);
-		*/
 		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
@@ -174,12 +186,10 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
-
 		A_y = A_y + GRID_INTERVAL * dir_y;
 		if (dir_x)
 			A_x = A_x + fabs(GRID_INTERVAL / tanf(to_radians(ray_angle))) * dir_x;
 	}
-
 	if (wall_found)
 	{
 		*wallType = map[A_y_grid][A_x_grid] - 1;
@@ -187,10 +197,8 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 			distanceToHorWall =  (player.pos.x - A_x) / cosf(to_radians(ray_angle));
 		else
 			distanceToHorWall = A_y - player.pos.y;
-
 		*wallPos = GRID_INTERVAL - (int)A_x % GRID_INTERVAL;
 	}
-
 	return (distanceToHorWall);
 }
 
@@ -204,6 +212,7 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
  * @dir_y: The y-direction of the ray
  * @ray_angle: The ray's angle
  * @wallPos: The position of the ray on the wall block
+ * @wallType: The type of wall
  * Return: Distance to wall
  */
 float getDistToVerticalWall(MazePlayer player, int map[][MAP_WIDTH],
@@ -228,10 +237,6 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 	{
 		A_x_grid = A_x / GRID_INTERVAL;
 		A_y_grid = A_y / GRID_INTERVAL;
-		/**
-		* printf("col: %d, Angle: %f - Ver: Grid [%d, %d] Pos[%f, %f]\n",
-		* column->index, ray_angle, A_x_grid, A_y_grid, A_x, A_y);
-		*/
 		wall_found = check_for_wall(A_x_grid, A_y_grid, map);
 		if (wall_found)
 			break;
@@ -249,35 +254,9 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 	{
 		*wallType = map[A_y_grid][A_x_grid] - 1;
 		distanceToVertWall = (player.pos.x - A_x) / cosf(to_radians(ray_angle));
-		
+
 		*wallPos = GRID_INTERVAL - (int)A_y % GRID_INTERVAL;
-		/* printf("A_y: %f, wallPos: %d\n", A_y, *wallPos); */
-		/*if (dir_y > 0)
-			*wallPos = A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL);
-		else
-			*wallPos = GRID_INTERVAL - (A_y - ((int)A_y / GRID_INTERVAL * GRID_INTERVAL));
-		*/
 	}
 	return (distanceToVertWall);
 }
 
-/**
- * fix_distortion - Corrects the given distance for distortion
- * @distance: The distance to be corrected (between the viewpoint and the wall)
- * @view_angle: The player's viewing angle
- * @ray_angle: The angle of the ray
- * Return: The corrected distance
- */
-int fix_distortion(float distance, float view_angle, float ray_angle)
-{
-	float beta; /* Distortion cor. factor: Angle between ray and view angle */
-	int corrected_distance;
-
-	beta = fabs(ray_angle - view_angle);
-	if (beta > 180)
-		beta = 360 - beta;
-
-	corrected_distance = distance * cosf(to_radians(beta));
-
-	return (corrected_distance);
-}

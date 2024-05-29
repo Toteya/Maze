@@ -110,7 +110,6 @@ void init_wallTextureFilepaths(char *files[])
 		case FINISH_2:
 			files[i] = "images/wall_finish_02.png";
 			break;
-		
 		default:
 			break;
 		}

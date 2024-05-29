@@ -2,7 +2,7 @@
 
 /**
  * do_action - Performs an action according to the given action code
- * @action: The code specifying the action to performed
+ * @actions: An array of polled action codes specifying the action to performed
  * @player: The player
  * @map: The maze map
  * Return: Nothing
@@ -11,7 +11,7 @@ void do_action(int actions[], MazePlayer *player, int map[][MAP_WIDTH])
 {
 	int i = 0;
 
-	while(actions[i])
+	while (actions[i])
 	{
 		switch (actions[i])
 		{
@@ -78,7 +78,7 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 		angle_rad = to_radians(player->view_angle);
 	else
 		angle_rad = to_radians(player->view_angle + 180);
-		
+
 
 	/* printf("deg: %f, rad: %f\n", player->view_angle, angle_rad); */
 
@@ -105,7 +105,7 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 }
 
 /**
- * initaliases the actions array
+ * clear_actions - initaliases the actions array to zero
  * @actions: The array of event polled actions
  * Return: Nothing.
  */

@@ -10,7 +10,8 @@ void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y);
  * @player: The player
  * @pp_distance: The distance between the player and the projection plane
  */
-void drawFloorSlice(SDL_Instance *gInstance, RendColumn column, MazePlayer player, int pp_distance)
+void drawFloorSlice(SDL_Instance *gInstance, RendColumn column,
+	MazePlayer player, int pp_distance)
 {
 	int fp_row; /* The projected floor point row */
 	int distance; /* Distance to floor point */
@@ -28,14 +29,14 @@ void drawFloorSlice(SDL_Instance *gInstance, RendColumn column, MazePlayer playe
 		distance = getFloorDistance(fp_row, pp_distance, beta);
 		F_x = roundf(player.pos.x + distance * cosf(to_radians(column.ray_angle)));
 		F_y = roundf(player.pos.y - distance * sinf(to_radians(column.ray_angle)));
-		/*
-		printf("dc: %d, d: %d, alpha: %d, P: [%d, %d], F: [%d, %d]\n",
-			column.distance, distance, column.ray_angle, player.pos.x, player.pos.y, F_x, F_y);
+		/**
+		* printf("dc: %d, d: %d, alpha: %d, P: [%d, %d], F: [%d, %d]\n",
+		* column.distance, distance, column.ray_angle,
+		* player.pos.x, player.pos.y, F_x, F_y);
 		*/
 		renderFloorPixel(gInstance, column.index, fp_row, F_x, F_y);
-		fp_row ++;
+		fp_row++;
 	}
-	
 }
 
 /**
@@ -58,10 +59,10 @@ int getFloorDistance(int fp_row, int pp_distance, float beta)
 
 	s_distance = roundf(pp_distance * ((float) p_height / r));
 	distance = roundf(s_distance / (cosf(to_radians(beta))));
-	
-	/*
-	printf("d: %d, d_s: %d, beta: %f, dp: %d, fp: %d, p_height: %d\n",
-		distance, s_distance, beta, pp_distance, fp_row, p_height);
+
+	/**
+	* printf("d: %d, d_s: %d, beta: %f, dp: %d, fp: %d, p_height: %d\n",
+	* distance, s_distance, beta, pp_distance, fp_row, p_height);
 	*/
 	return (distance);
 }
@@ -75,8 +76,8 @@ int getFloorDistance(int fp_row, int pp_distance, float beta)
  * @f_x: The x- coordinate of the floor point
  * @f_y: The y- coordinate of the floor point
  */
- void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y)
- {
+void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y)
+{
 	SDL_Renderer *gRenderer = gInstance->renderer;
 	M_Texture *fTexture = &(gInstance->floor_texture);
 
@@ -86,8 +87,9 @@ int getFloorDistance(int fp_row, int pp_distance, float beta)
 
 	t_x = fTexture->width * fabs((float)(f_x % GRID_INTERVAL) / GRID_INTERVAL);
 	t_y = fTexture->height * fabs((float)(f_y % GRID_INTERVAL) / GRID_INTERVAL);
-	/*
-	printf("screen: [%d, %d], floor: [%d, %d], texture: [%d, %d]\n\n", x, y, f_x, f_y, t_x, t_y);
+	/**
+	* printf("screen: [%d, %d], floor: [%d, %d], texture: [%d, %d]\n\n",
+	* x, y, f_x, f_y, t_x, t_y);
 	*/
 	clipPX.x = t_x;
 	clipPX.y = t_y;
@@ -100,5 +102,4 @@ int getFloorDistance(int fp_row, int pp_distance, float beta)
 	renderPX.h = 1;
 
 	SDL_RenderCopy(gRenderer, fTexture->mTexture, &clipPX, &renderPX);
-
- }
+}
