@@ -18,9 +18,9 @@
 
 #define MOVE_STEP 5
 #define ROTATION_STEP 1 /* Degrees */
-#define PLAYER_START_POS_X 256
-#define PLAYER_START_POS_Y 3584
-#define PLAYER_START_VIEW_ANGLE 70
+#define PLAYER_START_POS_X 512
+#define PLAYER_START_POS_Y 3554
+#define PLAYER_START_VIEW_ANGLE 210
 #define MAX_ACTIONS 10 /* Maximum number of simultaneous actions to be polled*/
 
 #define Y_DIRECTION_UP -1

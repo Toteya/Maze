@@ -105,7 +105,7 @@ void renderFloorPixel(SDL_Instance *gInstance, int x, int y, int f_x, int f_y)
 }
 
 /**
- * paint_floor - Renders the default floor color. This color will be visible
+ * paintFloor - Renders the default floor color. This color will be visible
  * if no texture is rendered
  * @gRenderer: The SDL_Renderer
  */

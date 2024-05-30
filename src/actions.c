@@ -79,9 +79,6 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 	else
 		angle_rad = to_radians(player->view_angle + 180);
 
-
-	/* printf("deg: %f, rad: %f\n", player->view_angle, angle_rad); */
-
 	if (action == ACTION_MOVE_FORWARD || action == ACTION_MOVE_BACKWARD)
 	{
 		new_x = roundf(player->pos.x + ((float) MOVE_STEP * cosf(angle_rad)));
@@ -101,7 +98,6 @@ void do_move(int action, MazePlayer *player, int map[][MAP_WIDTH])
 		player->pos.x = new_x;
 		player->pos.y = new_y;
 	}
-	/* printf("Pos: [%d, %d]\n", player->pos.x, player->pos.y); */
 }
 
 /**
