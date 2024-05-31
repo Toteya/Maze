@@ -3,6 +3,7 @@ Makefile
 *.sh
 .vscode
 src/maze
-a.out
+*.out
 *.csv
 *Zone.Identifier
+_*
