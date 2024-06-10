@@ -81,37 +81,3 @@ void game_loop(SDL_Instance gInstance)
 		render_graphics(&gInstance);
 	}
 }
-
-/**
- * init_wallTextureFilepaths - Initialises an array of filepaths containing
- * wall textures
- * @files: An array of filepaths
- */
-void init_wallTextureFilepaths(char *files[])
-{
-	int i;
-
-	for (i = 0; i < TOTAL_WALL_TYPES; i++)
-	{
-		switch (i)
-		{
-		case DEFAULT_WALL:
-			files[i] = "images/wall_default.png";
-			break;
-		case START_1:
-			files[i] = "images/wall_start_01.png";
-			break;
-		case START_2:
-			files[i] = "images/wall_start_02.png";
-			break;
-		case FINISH_1:
-			files[i] = "images/wall_finish_01.png";
-			break;
-		case FINISH_2:
-			files[i] = "images/wall_finish_02.png";
-			break;
-		default:
-			break;
-		}
-	}
-}
