@@ -71,7 +71,7 @@ char *filepath)
 
 /**
  * init_wallTextureFilepaths - Initialises an array of filepaths containing
- * wall textures
+ * different wall textures
  * @files: An array of filepaths
  */
 void init_wallTextureFilepaths(char *files[])
