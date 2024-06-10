@@ -30,6 +30,7 @@ void do_turn(int action, MazePlayer *player)
 	else
 		player->view_angle -= ROTATION_STEP;
 
+	/* Keep the viewing angle within the range of 0 - 360 */
 	if (player->view_angle > 360)
 		player->view_angle -= 360;
 	else if (player->view_angle < 0)
