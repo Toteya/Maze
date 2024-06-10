@@ -161,7 +161,7 @@ float getDistToHorizonalWall(MazePlayer player, int map[][MAP_WIDTH],
 int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 {
 	float distanceToHorWall = 0;
-	float A_x, A_y; /* x- and y- distances to grid intersection */
+	float A_x, A_y; /* x- and y- map coordinates of grid intersection */
 	int A_x_grid = 0, A_y_grid = 0; /* Grid coordinates */
 	bool wall_found;
 
@@ -219,7 +219,7 @@ float getDistToVerticalWall(MazePlayer player, int map[][MAP_WIDTH],
 int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 {
 	float distanceToVertWall = 0;
-	float A_x, A_y; /* x and y distances to grid intersection */
+	float A_x, A_y; /* x and y map coordinates to grid intersection */
 	int A_x_grid = 0, A_y_grid = 0; /* Grid coordinates */
 	bool wall_found;
 

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
 	SDL_Instance gInstance;
 	char *map_filename = "maps/maze_map.csv";
-	char *floor_texture_filepath = "images/floor_02.png$$";
+	char *floor_texture_filepath = "$$images/floor_02.png";
 	char *wall_texture_filepath[TOTAL_WALL_TYPES];
 	int i;
 
@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
+	/* Load and initialise map */
 	if (argc > 1)
 		map_filename = argv[1];
 	if (init_map(gInstance.map, map_filename) == false)
@@ -73,7 +74,6 @@ void game_loop(SDL_Instance gInstance)
 	while (true)
 	{
 		clear_actions(actions);
-		/* if (actions[0] == ACTION_QUIT) */
 		if (!(poll_events(actions)))
 			break;
 

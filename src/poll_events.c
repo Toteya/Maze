@@ -22,6 +22,7 @@ bool poll_events(int actions[])
 		}
 	}
 
+	/* Allows for simultaneous key events */
 	currentKeyStates = SDL_GetKeyboardState(NULL);
 	if (currentKeyStates[SDL_SCANCODE_ESCAPE])
 		return (false);

@@ -60,10 +60,6 @@ void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
 	SDL_Renderer *gRenderer = gInstance->renderer;
 
 	wp_height = wall_height * ((float) pp_dist / column->distance);
-	/**
-	* printf("col: %d, Dw: %d, Dp: %d, Hw: %d, Hp: %d\n",
-	* column, wall_distance, pp_distance, wall_height, proj_height);
-	*/
 	y_start = (WINDOW_HEIGHT / 2) - (wp_height / 2);
 	y_end = y_start + wp_height;
 	column->wb_row = y_end;
