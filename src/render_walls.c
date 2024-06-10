@@ -48,36 +48,36 @@ void drawWallSlice(RendColumn *column, int pp_dist, SDL_Instance *gInstance)
  */
 void set_wall_color(int direction, SDL_Colour *wall_color)
 {
-	/**
-	 * Natural grey: #8c867f ->
-	 * Cloudy: #9c9895 -> #797673
-	 *
-	 */
+	/* Natural grey: #8c867f -> #8A8784 */
+	SDL_Color grey = {0x8A, 0x87, 0x84, 0xFF};
+	/* Cloudy grey: #9c9895 -> #797673 */
+	SDL_Color cloudy = {0x79, 0x76, 0x73, 0xFF};
+	
 	switch (direction)
 	{
 		case NORTH:
-			wall_color->r = 0x8A;
-			wall_color->g = 0x87;
-			wall_color->b = 0x84;
-			wall_color->a = 0xFF;
+			wall_color->r = grey.r;
+			wall_color->g = grey.g;
+			wall_color->b = grey.b;
+			wall_color->a = grey.a;
 			break;
 		case SOUTH:
-			wall_color->r = 0x8A;
-			wall_color->g = 0x87;
-			wall_color->b = 0x84;
-			wall_color->a = 0xFF;
+			wall_color->r = grey.r;
+			wall_color->g = grey.g;
+			wall_color->b = grey.b;
+			wall_color->a = grey.a;
 			break;
 		case EAST:
-			wall_color->r = 0x79;
-			wall_color->g = 0x76;
-			wall_color->b = 0x73;
-			wall_color->a = 0xFF;
+			wall_color->r = cloudy.r;
+			wall_color->g = cloudy.g;
+			wall_color->b = cloudy.b;
+			wall_color->a = cloudy.a;
 			break;
 		case WEST:
-			wall_color->r = 0x79;
-			wall_color->g = 0x76;
-			wall_color->b = 0x73;
-			wall_color->a = 0xFF;
+			wall_color->r = cloudy.r;
+			wall_color->g = cloudy.g;
+			wall_color->b = cloudy.b;
+			wall_color->a = cloudy.a;
 			break;
 		default:
 			break;
