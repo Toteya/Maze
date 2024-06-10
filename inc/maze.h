@@ -191,6 +191,7 @@ float to_radians(float angle_deg);
 int fix_distortion(float distance, float view_angle, float ray_angle);
 void getWallDistance(RendColumn *, MazePlayer, int map[][MAP_WIDTH]);
 void init_texture(M_Texture *texture);
+void drawWallSlice(RendColumn *, int, SDL_Instance *);
 void renderWallTexture(SDL_Instance *gInstance, int x, int y, int height,
 	RendColumn column);
 bool loadTexture(SDL_Renderer *gRenderer, M_Texture *texture,
