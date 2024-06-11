@@ -1,6 +1,4 @@
-#include <SDL2/SDL.h>
 #include "../inc/maze.h"
-
 
 void game_loop(SDL_Instance gInstance);
 void init_wallTextureFilepaths(char *files[]);
