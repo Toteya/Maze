@@ -174,7 +174,7 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 	A_x = player.pos.x + (player.pos.y - A_y) / tanf(to_radians(ray_angle));
 
 	wall_found = false;
-	while (dir_x && (A_x_grid >= 0 && A_x_grid < MAP_WIDTH) &&
+	while ((A_x_grid >= 0 && A_x_grid < MAP_WIDTH) &&
 	(A_y_grid >= 0 && A_y_grid < MAP_HEIGHT))
 	{
 		A_y_grid = A_y / GRID_INTERVAL;
@@ -232,7 +232,7 @@ int dir_x, int dir_y, float ray_angle, int *wallPos, int *wallType)
 	A_y = player.pos.y + (player.pos.x - A_x) * tanf(to_radians(ray_angle));
 
 	wall_found = false;
-	while (dir_y && (A_x_grid >= 0 && A_x_grid < MAP_WIDTH) &&
+	while ((A_x_grid >= 0 && A_x_grid < MAP_WIDTH) &&
 	(A_y_grid >= 0 && A_y_grid < MAP_HEIGHT))
 	{
 		A_x_grid = A_x / GRID_INTERVAL;
